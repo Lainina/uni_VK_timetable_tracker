@@ -1,0 +1,49 @@
+{
+    "odd": {
+        "Monday": [
+            {
+                "class_time": "09:00",
+                "class_name": "Хор",
+                "room_number": 101
+            },
+            {
+                "class_time": "10:00",
+                "class_name": "Сольфеджио",
+                "room_number": 201
+            }
+        ],
+        "Tuesday": [
+            {
+                "class_time": "09:00",
+                "class_name": "Педагогика",
+                "room_number": 101
+            },
+            {
+                "class_time": "10:00",
+                "class_name": "Хор",
+                "room_number": 201
+            }
+        ],
+        "Wednesday": [
+            {
+                "class_time": "09:00",
+                "class_name": "Хор",
+                "room_number": 304
+            },
+            {
+                "class_time": "10:00",
+                "class_name": "Английский язык",
+                "room_number": 314
+            }
+        ]
+    },
+    "even": {
+        "Monday": [
+            {
+                "class_time": "09:00",
+                "class_name": "Хор",
+                "room_number": 304
+            }
+        ]
+    }
+}
