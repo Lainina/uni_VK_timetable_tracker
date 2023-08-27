@@ -12,6 +12,13 @@ class Server:
     ts: str
 
 
+@dataclass
+class Message:
+    peer_id: int
+    message_id: int
+    text: str
+
+
 class VkApiHandler:
     def __init__(self, token: str, chat_id: int = TEST_CHAT_ID_1):
         self.token = token
@@ -76,7 +83,7 @@ class VkApiHandler:
 
         return Server(key, server_url, ts)
 
-    def poll(self, server: Server) -> (str, list[dict[str, str | int]]):
+    def poll(self, server: Server) -> (str, list[Message]):
         params = {'act': 'a_check',
                   'key': server.key,
                   'ts': server.ts,
@@ -108,9 +115,8 @@ class VkApiHandler:
         messages = []
         for update in response['updates']:
             info = update['object']['message']
-            message = {'peer_id': info['peer_id'],
-                       'message_id': info['conversation_message_id'],
-                       'text': info['text']}
+
+            message = Message(info['peer_id'], info['conversation_message_id'], info['text'])
 
             messages.append(message)
 

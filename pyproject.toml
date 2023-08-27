@@ -10,6 +10,7 @@ packages = [{include = "redemption_bot"}]
 python = "^3.11"
 schedule = "^1.2.0"
 requests = "^2.31.0"
+flask = "^2.3.3"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -2,6 +2,7 @@ from src.database.database import Timetable
 from src.vk.API_handler import VkApiHandler
 from src.reminder_handler.reminder_handler import ReminderHandler
 from src.core.message_handler import MessageHandler
+from threading import Thread
 
 
 class RedemptionBot:
@@ -30,5 +31,8 @@ class RedemptionBot:
                     pass  # TODO: handle messages somehow
 
     def start_bot(self):
-        self.start_polling()
-        self.start_reminding()
+        thread_1 = Thread(target=self.start_polling)
+        thread_2 = Thread(target=self.start_reminding)
+
+        thread_1.start()
+        thread_2.start()
