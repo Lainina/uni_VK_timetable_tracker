@@ -29,7 +29,9 @@ class MessageHandler:
     def send_schedule_for_day(self, day=datetime.today()) -> dict[str, dict[str, str]]:
 
         classes = self._timetable.get_classes_for_day(day)
-        formatted_classes = self.format(classes, day.strftime('%A'))
+
+        weekday = self._timetable.translate_weekday(day.strftime('%A'))
+        formatted_classes = self.format(classes, weekday)
 
         self._vk.send_message(formatted_classes)
 
