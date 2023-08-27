@@ -57,7 +57,7 @@ class VkApiHandler:
             return
         return
 
-    def get_longpoll_server(self) -> Server | None:
+    def get_longpoll_server(self) -> Server:
         params = {'group_id': self.group_id,
                   'access_token': self.token,
                   'v': self.version}
@@ -66,7 +66,7 @@ class VkApiHandler:
 
         if response.json().get('error', {}):
             print('error: could not get long poll server')
-            return
+            raise RuntimeError('getLongPollServer returned error')
 
         server = response.json().get('response', {})
 
@@ -76,7 +76,7 @@ class VkApiHandler:
 
         return Server(key, server_url, ts)
 
-    def poll(self, server: Server) -> dict[str, str | dict[str, str | int]]:
+    def poll(self, server: Server) -> (str, list[dict[str, str | int]]):
         params = {'act': 'a_check',
                   'key': server.key,
                   'ts': server.ts,
@@ -85,11 +85,11 @@ class VkApiHandler:
 
         if response.json().get('failed', {}):
             print('warning: failed to get updates, trying again...')
-            server = self.get_longpoll_server()
-
-            if not server:
+            try:
+                server = self.get_longpoll_server()
+            except RuntimeError:
                 print('error: could not restart server, terminating...')
-                return {}
+                raise
 
             params['key'] = server.key
             params['ts'] = server.ts
@@ -98,29 +98,28 @@ class VkApiHandler:
 
             if response.json().get('failed', {}):
                 print('error: failed to get updates twice, terminating...')
-                return {}
+                raise RuntimeError('server poll failed twice')
+
             print('warning: connection restored')
 
-        # TODO: format the info from response and return it
-        return {'ts': '7566', 'messages': [{'peer_id': 200000002, 'message_id': 17800, 'text': 'Это тест'}]}
+        response = response.json()
 
-    def start_polling(self):
-        server = self.get_longpoll_server()
+        server.ts = response['ts']
+        messages = []
+        for update in response['updates']:
+            info = update['object']['message']
+            message = {'peer_id': info['peer_id'],
+                       'message_id': info['conversation_message_id'],
+                       'text': info['text']}
 
-        if not server:
-            print('error: failed to start polling')
-            return
+            messages.append(message)
 
-        while True:
-            updates = self.poll(server)
+        return server, messages
 
-            if not updates:
-                print('terminal error: longpoll connection terminated')
-                return
-
-            server.ts = updates['ts']
-            messages = updates['messages']
-
-            if messages:
-                for message in messages:
-                    pass  # TODO: handle messages somehow
+    def get_first_server(self) -> Server:
+        try:
+            server = self.get_longpoll_server()
+            return server
+        except RuntimeError:
+            print('terminal error: failed to start polling')
+            raise

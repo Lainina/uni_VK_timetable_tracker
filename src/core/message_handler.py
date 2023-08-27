@@ -9,15 +9,27 @@ class MessageHandler:
         self._timetable = timetable
 
     @staticmethod
-    def format(classes: dict[str, dict[str, str]]) -> str:
-        formatted_classes = str(classes)  # TODO: format the classes
+    def format(lessons: dict[str, dict[str, str]], day: str) -> str:
+        day = day.lower()   # TODO: find a more pythonic way to do this
+        if day[-1] == 'а':
+            day = day[:-1] + 'у'
+
+        formatted_classes = f'Расписание на {day}:'
+
+        if lessons:
+            for lesson_number in lessons:
+                lesson = lessons[lesson_number]
+                formatted_classes += (f'\n{lesson_number} пара ({lesson["start_time"]}-{lesson["end_time"]}) — '
+                                      f'{lesson["class_name"]} (ауд. {lesson["room_number"]})')
+        else:
+            formatted_classes += '\nПар нет 🎉'
 
         return formatted_classes
 
     def send_schedule_for_day(self, day=datetime.today()) -> dict[str, dict[str, str]]:
 
         classes = self._timetable.get_classes_for_day(day)
-        formatted_classes = self.format(classes)
+        formatted_classes = self.format(classes, day.strftime('%A'))
 
         self._vk.send_message(formatted_classes)
 

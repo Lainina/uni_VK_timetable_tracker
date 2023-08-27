@@ -12,11 +12,22 @@ class RedemptionBot:
         self.message_handler = message_handler
         self.reminder_handler = reminder_handler
 
-    def start_reminding(self):
+    def start_reminding(self) -> None:
         self.reminder_handler.start_reminding()
 
     def start_polling(self):
-        pass
+        server = self.vk.get_first_server()
+
+        while True:
+            try:
+                server, messages = self.vk.poll(server)
+            except RuntimeError:
+                print('terminal error: longpoll connection terminated')
+                raise
+
+            if messages:
+                for message in messages:
+                    pass  # TODO: handle messages somehow
 
     def start_bot(self):
         self.start_polling()
