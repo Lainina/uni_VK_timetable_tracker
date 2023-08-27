@@ -11,6 +11,7 @@ python = "^3.11"
 schedule = "^1.2.0"
 requests = "^2.31.0"
 flask = "^2.3.3"
+pytz = "^2023.3"
 
 
 [tool.poetry.group.dev.dependencies]

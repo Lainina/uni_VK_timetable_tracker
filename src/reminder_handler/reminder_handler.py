@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 from schedule import CancelJob
 
-from config import REMINDER_DELAY, DAILY_REMINDER_TIME
+from config import REMINDER_DELAY, DAILY_REMINDER_TIME, TIMEZONE
 from src.vk.API_handler import VkApiHandler
 from src.core.message_handler import MessageHandler
 
@@ -41,7 +41,7 @@ class ReminderHandler:
         schedule.every().day.at(send_time).do(self.send_reminder, text=reminder, delete_time=end_time)
 
     def prep_the_day(self) -> None:
-        tomorrow = datetime.today() + timedelta(days=1)
+        tomorrow = datetime.now(TIMEZONE) + timedelta(days=1)
 
         lessons = self._message_handler.send_schedule_for_day(tomorrow)
 
@@ -49,6 +49,7 @@ class ReminderHandler:
             self.schedule_reminder(lessons[lesson])
 
     def start_reminding(self) -> None:
+        # TODO: schedule lessons that are today on start
         schedule.every().day.at(DAILY_REMINDER_TIME).do(self.prep_the_day)
 
         while True:
