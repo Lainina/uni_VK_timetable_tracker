@@ -1,8 +1,6 @@
 import json
 from datetime import datetime
-import locale
-
-locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
+from src.database.weekday_translation import weekday_translation
 
 
 class Timetable:
@@ -23,13 +21,16 @@ class Timetable:
                     weekday: str,
                     week_type: str) -> dict[str, dict[str, str]]:
 
-        weekday = weekday.capitalize()
-
         return self.timetable.get(week_type, {}).get(weekday, {})
+
+    @staticmethod
+    def translate_weekday(weekday: str) -> str:
+        return weekday_translation[weekday]
 
     def get_classes_for_day(self, day=datetime.today()) -> dict[str, dict[str, str]]:
 
-        weekday = day.strftime('%A').capitalize()
+        weekday = self.translate_weekday(day.strftime('%A'))
+
         week_number = day.isocalendar()[1]
 
         week_type = 'odd' if week_number % 2 == 1 else 'even'
