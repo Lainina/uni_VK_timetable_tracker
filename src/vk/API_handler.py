@@ -1,16 +1,29 @@
 import requests
-from src.core.vk.token import VK_TOKEN
+from config import TEST_CHAT_ID_1
+from dataclasses import dataclass
+
+
 # TODO: add logging, replace all prints with logs
+
+@dataclass
+class Server:
+    key: str
+    server_url: str
+    ts: str
 
 
 class VkApiHandler:
-    def __init__(self, token: str):
+    def __init__(self, token: str, chat_id: int = TEST_CHAT_ID_1):
         self.token = token
         self.version = '5.131'
         self.api_url = 'https://api.vk.com/method/'
         self.group_id = '219138476'
+        self.chat_id = chat_id
 
-    def send_message(self, text: str, peer_id=2000000002) -> int:
+    def send_message(self, text: str, peer_id: int = 0) -> int:
+        if not peer_id:
+            peer_id = self.chat_id
+
         params = {'peer_ids': str(peer_id),
                   'random_id': '0',
                   'message': text,
@@ -27,7 +40,10 @@ class VkApiHandler:
 
         return message_id
 
-    def delete_message(self, peer_id: int, message_id: int) -> None:
+    def delete_message(self, message_id: int, peer_id: int = 0) -> None:
+        if not peer_id:
+            peer_id = self.chat_id
+
         params = {'peer_id': str(peer_id),
                   'cmids': str(message_id),
                   'delete_for_all': '1',
@@ -41,7 +57,7 @@ class VkApiHandler:
             return
         return
 
-    def get_longpoll_server(self) -> dict[str, str]:
+    def get_longpoll_server(self) -> Server | None:
         params = {'group_id': self.group_id,
                   'access_token': self.token,
                   'v': self.version}
@@ -50,16 +66,22 @@ class VkApiHandler:
 
         if response.json().get('error', {}):
             print('error: could not get long poll server')
-            return {}
+            return
 
-        return response.json().get('response', {})
+        server = response.json().get('response', {})
 
-    def poll(self, key: str, server_url: str, ts: str) -> dict:
+        key = server.get('key', {})
+        server_url = server.get('server', {})
+        ts = server.get('ts', {})
+
+        return Server(key, server_url, ts)
+
+    def poll(self, server: Server) -> dict[str, str | dict[str, str | int]]:
         params = {'act': 'a_check',
-                  'key': key,
-                  'ts': ts,
+                  'key': server.key,
+                  'ts': server.ts,
                   'wait': 25}
-        response = requests.get(url=server_url, params=params)
+        response = requests.get(url=server.server_url, params=params)
 
         if response.json().get('failed', {}):
             print('warning: failed to get updates, trying again...')
@@ -69,9 +91,10 @@ class VkApiHandler:
                 print('error: could not restart server, terminating...')
                 return {}
 
-            params.update(server)
-            server_url = params.pop('server')
-            response = requests.get(url=server_url, params=params)
+            params['key'] = server.key
+            params['ts'] = server.ts
+
+            response = requests.get(url=server.server_url, params=params)
 
             if response.json().get('failed', {}):
                 print('error: failed to get updates twice, terminating...')
@@ -88,23 +111,16 @@ class VkApiHandler:
             print('error: failed to start polling')
             return
 
-        key = server.get('response', {}).get('key', {})
-        server_url = server.get('response', {}).get('server', {})
-        ts = server.get('response', {}).get('ts', {})
-
         while True:
-            updates = self.poll(key, server_url, ts)
+            updates = self.poll(server)
 
             if not updates:
                 print('terminal error: longpoll connection terminated')
                 return
 
-            ts = updates['ts']
+            server.ts = updates['ts']
             messages = updates['messages']
 
             if messages:
                 for message in messages:
-                    pass    # TODO: handle messages somehow
-
-
-vk = VkApiHandler(token=VK_TOKEN)
+                    pass  # TODO: handle messages somehow

@@ -2,39 +2,39 @@ import json
 from datetime import datetime
 import locale
 
-
 locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
 
 
 class Timetable:
-    def __init__(self, filename: str) -> None:
-        self.filename: str = filename
+    def __init__(self, file_path: str) -> None:
+        self.file_path: str = file_path
         self.timetable = None
         self.load_schedule()
 
     def load_schedule(self) -> None:
-        with open(self.filename, 'r', encoding='utf-8') as f:
+        with open(self.file_path, 'r', encoding='utf-8') as f:
             self.timetable = json.load(f)
 
     def save_schedule(self) -> None:
-        with open(self.filename, 'w', encoding='utf-8') as f:
+        with open(self.file_path, 'w', encoding='utf-8') as f:
             json.dump(self.timetable, f, indent=4, ensure_ascii=False)
 
     def get_classes(self,
-                    day: str,
-                    week_type: str) -> dict[str, str]:
+                    weekday: str,
+                    week_type: str) -> dict[str, dict[str, str]]:
 
-        day = day.capitalize()
+        weekday = weekday.capitalize()
 
-        return self.timetable.get(week_type, {}).get(day, {})
+        return self.timetable.get(week_type, {}).get(weekday, {})
 
-    def get_classes_for_today(self) -> dict[str, str]:
-        today = datetime.today().strftime('%A')
-        week_number = datetime.today().isocalendar()[1]
+    def get_classes_for_day(self, day=datetime.today()) -> dict[str, dict[str, str]]:
+
+        weekday = day.strftime('%A').capitalize()
+        week_number = day.isocalendar()[1]
 
         week_type = 'odd' if week_number % 2 == 1 else 'even'
 
-        return self.get_classes(today, week_type)
+        return self.get_classes(weekday, week_type)
 
     def add_class(self,
                   week_type: str,
@@ -76,6 +76,3 @@ class Timetable:
             if number in self.timetable[week_type][day]:
                 del self.timetable[week_type][day][number]
                 self.save_schedule()
-
-
-timetable = Timetable('timetable.json')
