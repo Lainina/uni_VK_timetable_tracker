@@ -5,6 +5,7 @@ from src.reminder_handler.reminder_handler import ReminderHandler
 from src.core.bot import RedemptionBot
 from src.core.message_handler import MessageHandler
 from src.server.background import keep_alive
+import time
 
 if __name__ == '__main__':
     timetable = Timetable(DATABASE_PATH)
@@ -18,3 +19,5 @@ if __name__ == '__main__':
         keep_alive()
 
     bot.start_bot()
+
+    time.sleep(30)

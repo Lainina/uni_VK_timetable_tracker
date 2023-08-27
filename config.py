@@ -14,6 +14,6 @@ REMINDER_DELAY = -5
 
 DATABASE_PATH = r'src/database/timetable.json'
 
-ON_REPL = False
+ON_REPL = True
 
 DAILY_REMINDER_TIME = '21:00'
