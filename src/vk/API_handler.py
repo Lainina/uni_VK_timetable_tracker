@@ -1,9 +1,8 @@
 import requests
 from config import TEST_CHAT_ID_1
 from dataclasses import dataclass
+from src.core.logger.logger import logger
 
-
-# TODO: add logging, replace all prints with logs
 
 @dataclass
 class Server:
@@ -40,7 +39,7 @@ class VkApiHandler:
         response = requests.get(url=url, params=params)
 
         if response.json().get('error', {}):
-            print('error: could not send message')
+            logger.error('Could not send message: %s', text)
             return 0
 
         message_id = response.json().get('response', {})[0].get('conversation_message_id', {})
@@ -60,7 +59,7 @@ class VkApiHandler:
         response = requests.get(url=url, params=params)
 
         if response.json().get('error', {}):
-            print('error: could not delete message')
+            logger.error('Could not delete message: %s', str(message_id))
             return
         return
 
@@ -72,7 +71,7 @@ class VkApiHandler:
         response = requests.get(url=url, params=params)
 
         if response.json().get('error', {}):
-            print('error: could not get long poll server')
+            logger.error('Could not get longpoll server')
             raise RuntimeError('getLongPollServer returned error')
 
         server = response.json().get('response', {})
@@ -91,11 +90,11 @@ class VkApiHandler:
         response = requests.get(url=server.server_url, params=params)
 
         if response.json().get('failed', {}):
-            print('warning: failed to get updates, trying again...')
+            logger.warning('Failed to get updates, trying again...')
             try:
                 server = self.get_longpoll_server()
             except RuntimeError:
-                print('error: could not restart server, terminating...')
+                logger.critical('Could not restart server, terminating...')
                 raise
 
             params['key'] = server.key
@@ -104,10 +103,10 @@ class VkApiHandler:
             response = requests.get(url=server.server_url, params=params)
 
             if response.json().get('failed', {}):
-                print('error: failed to get updates twice, terminating...')
+                logger.critical('Failed to get updates twice, terminating...')
                 raise RuntimeError('server poll failed twice')
 
-            print('warning: connection restored')
+            logger.warning('Connection restored')
 
         response = response.json()
 
@@ -127,5 +126,5 @@ class VkApiHandler:
             server = self.get_longpoll_server()
             return server
         except RuntimeError:
-            print('terminal error: failed to start polling')
+            logger.critical('Failed to start polling')
             raise
