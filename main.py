@@ -10,7 +10,7 @@ if __name__ == '__main__':
     timetable = Timetable(DATABASE_PATH)
     vk = VkApiHandler(VK_TOKEN)
     message_handler = MessageHandler(vk, timetable)
-    reminder_handler = ReminderHandler(vk, message_handler)
+    reminder_handler = ReminderHandler(vk, timetable, message_handler)
 
     bot = RedemptionBot(timetable, vk, message_handler, reminder_handler)
 
