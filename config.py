@@ -1,0 +1,19 @@
+import os
+
+
+VK_TOKEN = os.environ['VK_TOKEN']
+
+UNI_CHAT_ID = 2000000001
+
+TEST_CHAT_ID_1 = 2000000002
+TEST_CHAT_ID_2 = 2000000003
+
+CHAT_ID = TEST_CHAT_ID_1
+
+REMINDER_DELAY = -5
+
+DATABASE_PATH = r'src/database/timetable.json'
+
+ON_REPL = True
+
+DAILY_REMINDER_TIME = '21:00'
