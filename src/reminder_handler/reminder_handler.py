@@ -1,5 +1,6 @@
 import time
 from typing import Type
+import re
 
 import schedule
 from datetime import datetime, timedelta
@@ -10,6 +11,7 @@ from config import REMINDER_DELAY, DAILY_REMINDER_TIME, TIMEZONE
 from src.vk.API_handler import VkApiHandler
 from src.core.message_handler import MessageHandler
 from src.database.database import Timetable
+from src.core.logger.logger import logger
 
 
 class ReminderHandler:
@@ -19,12 +21,17 @@ class ReminderHandler:
         self._message_handler = message_handler
 
     def send_reminder(self, text, delete_time) -> Type[CancelJob]:
+
+        match = re.search(r"пара — [\w. -]+", text)
+        logger.info('Sending reminder: %s', match[0][7:] if match else 'Not found')
+
         reminder_id = self._vk.send_message(text)
         schedule.every().day.at(delete_time).do(self.delete_reminder, reminder_id=reminder_id)
 
         return schedule.CancelJob
 
     def delete_reminder(self, reminder_id: int) -> Type[CancelJob]:
+        logger.info('Deleting reminder...')
         self._vk.delete_message(reminder_id)
 
         return schedule.CancelJob
@@ -33,6 +40,8 @@ class ReminderHandler:
         reminder = (
             f"Через {abs(REMINDER_DELAY)} минут начнётся пара — {lesson['class_name']} (ауд. {lesson['room_number']})"
             f"\nПреподаватель — {lesson['prof_name']}")
+
+        logger.info('Scheduling reminder: %s', lesson['class_name'])
 
         start_time = lesson['start_time']
         end_time = lesson['end_time']
