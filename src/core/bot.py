@@ -2,6 +2,7 @@ from src.database.database import Timetable
 from src.vk.API_handler import VkApiHandler
 from src.reminder_handler.reminder_handler import ReminderHandler
 from src.core.message_handler import MessageHandler
+from src.core.logger.logger import logger
 from threading import Thread
 
 
@@ -18,16 +19,18 @@ class RedemptionBot:
 
     def start_polling(self):
         server = self.vk.get_first_server()
+        logger.info('Connected to server, polling...')
 
         while True:
             try:
                 server, messages = self.vk.poll(server)
             except RuntimeError:
-                print('terminal error: longpoll connection terminated')
+                logger.critical('Longpoll connection terminated')
                 raise
 
             if messages:
                 for message in messages:
+                    logger.info('Received message: %s', message)
                     pass  # TODO: handle messages somehow
 
     def start_bot(self):

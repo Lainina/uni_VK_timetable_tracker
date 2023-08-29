@@ -10,6 +10,7 @@ schedule = "1.2.0"
 requests = "2.31.0"
 Flask = "2.3.2"
 auto-mix-prep = "^0.2.0"
+pytz = "^2023.3"
 
 [tool.poetry.dev-dependencies]
 
