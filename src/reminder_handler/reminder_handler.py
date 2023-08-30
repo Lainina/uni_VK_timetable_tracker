@@ -26,7 +26,7 @@ class ReminderHandler:
         logger.info('Sending reminder: %s', match[0][7:] if match else 'Not found')
 
         reminder_id = self._vk.send_message(text)
-        schedule.every().day.at(delete_time).do(self.delete_reminder, reminder_id=reminder_id)
+        schedule.every().day.at(delete_time, TIMEZONE).do(self.delete_reminder, reminder_id=reminder_id)
 
         return schedule.CancelJob
 
@@ -49,7 +49,7 @@ class ReminderHandler:
         send_time = (datetime.strptime(start_time, '%H:%M')
                      + timedelta(minutes=REMINDER_DELAY)).strftime('%H:%M')
 
-        schedule.every().day.at(send_time).do(self.send_reminder, text=reminder, delete_time=end_time)
+        schedule.every().day.at(send_time, TIMEZONE).do(self.send_reminder, text=reminder, delete_time=end_time)
 
     def prep_tomorrow(self) -> None:
         tomorrow = datetime.now(TIMEZONE) + timedelta(days=1)
@@ -69,19 +69,19 @@ class ReminderHandler:
 
     def cancel_day(self):
         schedule.clear()
-        schedule.every().day.at(DAILY_REMINDER_TIME).do(self.prep_tomorrow)
+        schedule.every().day.at(DAILY_REMINDER_TIME, TIMEZONE).do(self.prep_tomorrow)
 
     def schedule_today(self):
         self.prep_today()
 
         reset_time = DAILY_REMINDER_TIME[0] + str(int(DAILY_REMINDER_TIME[1]) - 1) + DAILY_REMINDER_TIME[2:]
 
-        schedule.every().day.at(reset_time).do(self.cancel_day)
+        schedule.every().day.at(reset_time, TIMEZONE).do(self.cancel_day)
 
     def start_reminding(self) -> None:
-        self.schedule_today()
+        self.schedule_today()   # TODO: fix if started after 21:00 but before next day
 
-        schedule.every().day.at(DAILY_REMINDER_TIME).do(self.prep_tomorrow)
+        schedule.every().day.at(DAILY_REMINDER_TIME, TIMEZONE).do(self.prep_tomorrow)
 
         while True:
             schedule.run_pending()
