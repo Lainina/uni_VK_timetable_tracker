@@ -43,6 +43,7 @@ class VkApiHandler:
             return 0
 
         message_id = response.json().get('response', {})[0].get('conversation_message_id', {})
+        logger.info('Sent message: %s, id = %s', text, message_id)
 
         return message_id
 

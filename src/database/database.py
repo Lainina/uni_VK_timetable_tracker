@@ -1,7 +1,6 @@
 import json
-from datetime import datetime
 from src.database.weekday_translation import weekday_translation
-from config import TIMEZONE
+from src.reminder_handler import py_day
 
 
 class Timetable:
@@ -28,7 +27,7 @@ class Timetable:
     def translate_weekday(weekday: str) -> str:
         return weekday_translation[weekday]
 
-    def get_classes_for_day(self, day=datetime.now(TIMEZONE)) -> dict[str, dict[str, str]]:
+    def get_classes_for_day(self, day=py_day.today()) -> dict[str, dict[str, str]]:
 
         weekday = self.translate_weekday(day.strftime('%A'))
 

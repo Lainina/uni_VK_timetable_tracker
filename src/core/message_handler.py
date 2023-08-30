@@ -1,7 +1,6 @@
-from datetime import datetime
 from src.vk.API_handler import VkApiHandler
 from src.database.database import Timetable
-from config import TIMEZONE
+from src.reminder_handler import py_day
 
 
 class MessageHandler:
@@ -27,7 +26,7 @@ class MessageHandler:
 
         return formatted_classes
 
-    def send_schedule_for_day(self, day=datetime.now(TIMEZONE)) -> dict[str, dict[str, str]]:
+    def send_schedule_for_day(self, day=py_day.today()) -> dict[str, dict[str, str]]:
 
         classes = self._timetable.get_classes_for_day(day)
 

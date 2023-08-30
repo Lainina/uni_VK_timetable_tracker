@@ -2,12 +2,12 @@ import time
 from typing import Type
 import re
 
-import schedule
-from datetime import datetime, timedelta
+import py_day
 
+import schedule
 from schedule import CancelJob
 
-from config import REMINDER_DELAY, DAILY_REMINDER_TIME, TIMEZONE
+from config import REMINDER_DELAY, DAILY_REMINDER_TIME, DAILY_SCHEDULING_TIME, TIMEZONE
 from src.vk.API_handler import VkApiHandler
 from src.core.message_handler import MessageHandler
 from src.database.database import Timetable
@@ -46,42 +46,41 @@ class ReminderHandler:
         start_time = lesson['start_time']
         end_time = lesson['end_time']
 
-        send_time = (datetime.strptime(start_time, '%H:%M')
-                     + timedelta(minutes=REMINDER_DELAY)).strftime('%H:%M')
+        send_time = py_day.delta_minutes(start_time, REMINDER_DELAY)
 
         schedule.every().day.at(send_time, TIMEZONE).do(self.send_reminder, text=reminder, delete_time=end_time)
 
-    def prep_tomorrow(self) -> None:
-        tomorrow = datetime.now(TIMEZONE) + timedelta(days=1)
-
-        lessons = self._message_handler.send_schedule_for_day(tomorrow)
+    def schedule_day(self, day=py_day.today()) -> None:
+        lessons = self._timetable.get_classes_for_day(day)
 
         for lesson in lessons:
             self.schedule_reminder(lessons[lesson])
 
-    def prep_today(self):
-        today = datetime.now(TIMEZONE)
-
-        lessons = self._timetable.get_classes_for_day(today)
-
-        for lesson in lessons:
-            self.schedule_reminder(lessons[lesson])
-
-    def cancel_day(self):
+    def reset_reminders(self) -> Type[CancelJob]:
         schedule.clear()
-        schedule.every().day.at(DAILY_REMINDER_TIME, TIMEZONE).do(self.prep_tomorrow)
+        self.schedule_every_day()
 
-    def schedule_today(self):
-        self.prep_today()
+        return CancelJob
 
-        reset_time = DAILY_REMINDER_TIME[0] + str(int(DAILY_REMINDER_TIME[1]) - 1) + DAILY_REMINDER_TIME[2:]
+    def deal_with_today(self) -> None:
+        now = py_day.today().strftime('%H:%M')
 
-        schedule.every().day.at(reset_time, TIMEZONE).do(self.cancel_day)
+        if now == DAILY_REMINDER_TIME:
+            self._message_handler.send_schedule_for_day(py_day.tomorrow())
+
+        elif DAILY_SCHEDULING_TIME <= now < DAILY_REMINDER_TIME:
+            self.schedule_day(py_day.today())
+            schedule.every().day.at(DAILY_REMINDER_TIME).do(self.reset_reminders())
+
+    def schedule_every_day(self) -> None:
+        schedule.every().day.at(DAILY_SCHEDULING_TIME).do(self.schedule_day)
+        schedule.every().day.at(DAILY_REMINDER_TIME).do(self._message_handler.send_schedule_for_day, py_day.tomorrow())
 
     def start_reminding(self) -> None:
-        self.schedule_today()   # TODO: fix if started after 21:00 but before next day
 
-        schedule.every().day.at(DAILY_REMINDER_TIME, TIMEZONE).do(self.prep_tomorrow)
+        self.deal_with_today()
+
+        self.schedule_every_day()
 
         while True:
             schedule.run_pending()
