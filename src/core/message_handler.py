@@ -20,7 +20,7 @@ class MessageHandler:
             for lesson_number in lessons:
                 lesson = lessons[lesson_number]
                 formatted_classes += (f'\n{lesson_number} пара ({lesson["start_time"]}-{lesson["end_time"]}) — '
-                                      f'{lesson["class_name"]} (ауд. {lesson["room_number"]})')
+                                      f'{lesson["class_name"]}')
         else:
             formatted_classes += '\nПар нет 🎉'
 

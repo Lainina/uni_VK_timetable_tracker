@@ -1,19 +1,29 @@
 {
     "even": {
         "Понедельник": {
+            "1": {
+                "start_time": "9:30",
+                "end_time": "10:30",
+                "class_name": "Физ-ра",
+                "room_number": "— ",
+                "prof_name": "Каминский Юрий Михайлович",
+                "url": ""
+            },
             "3": {
                 "start_time": "12:30",
                 "end_time": "14:00",
                 "class_name": "Английский язык (ПЗ)",
                 "room_number": "312",
-                "prof_name": "Нюнина Дарья Михайловна"
+                "prof_name": "Нюнина Дарья Михайловна",
+                "url": "https://el.mpgu.su/enrol/index.php?id=8378"
             },
             "4": {
                 "start_time": "14:10",
                 "end_time": "15:40",
-                "class_name": "История зарубежной музыки",
+                "class_name": "История зарубежной музыки (ЛК/ПЗ)",
                 "room_number": "316",
-                "prof_name": "Переверзева М. В."
+                "prof_name": "Переверзева М. В.",
+                "url": ""
             }
         },
         "Вторник": {
@@ -22,30 +32,26 @@
                 "end_time": "15:40",
                 "class_name": "Хор (девушки)",
                 "room_number": "315",
-                "prof_name": "Кальченко Елена Викторовна"
+                "prof_name": "Кальченко Елена Викторовна",
+                "url": "https://x00.pk.mpgu.su/b/3xy-61g-1gq"
             }
         },
         "Среда": {
-            "1": {
-                "start_time": "9:30",
-                "end_time": "10:30",
-                "class_name": "Физ-ра",
-                "room_number": "— ",
-                "prof_name": "Бурнашова Наталья Юрьевна"
-            },
             "4": {
                 "start_time": "14:10",
                 "end_time": "15:40",
                 "class_name": "Безопасность жизнедеятельности (ПЗ)",
                 "room_number": "316",
-                "prof_name": "Максиняева Марьям Рустамовна"
+                "prof_name": "Максиняева Марьям Рустамовна",
+                "url": "https://el.mpgu.su/enrol/index.php?id=814"
             },
             "5": {
                 "start_time": "15:50",
                 "end_time": "17:20",
                 "class_name": "Безопасность жизнедеятельности (ЛК)",
                 "room_number": "316",
-                "prof_name": "Максиняева Марьям Рустамовна"
+                "prof_name": "Максиняева Марьям Рустамовна",
+                "url": "https://el.mpgu.su/enrol/index.php?id=814"
             }
         },
         "Четверг": {
@@ -54,28 +60,32 @@
                 "end_time": "12:10",
                 "class_name": "Сольфеджио (2 группа)",
                 "room_number": "308",
-                "prof_name": "Румянцева Маргарита Евгеньевна"
+                "prof_name": "Румянцева Маргарита Евгеньевна",
+                "url": "https://x03.pk.mpgu.su/b/9dc-4h8-pbl"
             },
             "3": {
                 "start_time": "12:30",
                 "end_time": "14:00",
                 "class_name": "Сольфеджио (1 группа)",
                 "room_number": "308",
-                "prof_name": "Румянцева Маргарита Евгеньевна"
+                "prof_name": "Румянцева Маргарита Евгеньевна",
+                "url": "https://x03.pk.mpgu.su/b/9dc-4h8-pbl"
             },
             "4": {
                 "start_time": "14:10",
                 "end_time": "15:40",
                 "class_name": "Психология (ПЗ)",
                 "room_number": "316",
-                "prof_name": "Крайнова Юлия Николаевна"
+                "prof_name": "Крайнова Юлия Николаевна",
+                "url": "https://el.mpgu.su/enrol/index.php?id=5407"
             },
             "5": {
                 "start_time": "15:50",
                 "end_time": "17:20",
                 "class_name": "Педагогика (ПЗ)",
                 "room_number": "316",
-                "prof_name": "Милехина Татьяна Евгеньевна"
+                "prof_name": "Милехина Татьяна Евгеньевна",
+                "url": "https://teams.microsoft.com/l/meetup-join/19%3ameeting_ZTNhY2QyNGYtNGU0Zi00YThmLWEzNzEtNjhjOTJlYzAxZjVi%40thread.v2/0?context=%7b%22Tid%22%3a%22e9054f9c-4427-460a-aed5-40bff9987087%22%2c%22Oid%22%3a%221bf4e4a3-e92f-44bf-8c3f-2e05d45f79a6%22%7d"
             }
         },
         "Пятница": {
@@ -84,41 +94,54 @@
                 "end_time": "12:10",
                 "class_name": "Правовые основы проф. деят. (ПЗ)",
                 "room_number": "206",
-                "prof_name": "Черноусова Наталия Васильевна"
+                "prof_name": "Черноусова Наталия Васильевна",
+                "url": "https://teams.microsoft.com/l/meetup-join/19%3AvB4zJ330ejhIxGjXnx3pR0DsC80_MouZNXs1zs-nxeA1%40thread.tacv2/1665770073952?context=%7B%22Tid%22%3A%22e9054f9c-4427-460a-aed5-40bff9987087%22%2C%22Oid%22%3A%22a1d8b0c5-9b19-4f18-a966-242575aaf722%22%7D"
             },
             "4": {
                 "start_time": "14:10",
                 "end_time": "15:40",
                 "class_name": "Хор (девушки)",
                 "room_number": "316",
-                "prof_name": "Кальченко Елена Викторовна"
+                "prof_name": "Кальченко Елена Викторовна",
+                "url": "https://x00.pk.mpgu.su/b/3xy-61g-1gq"
             }
         }
     },
     "odd": {
         "Понедельник": {
-            "3": {
-                "start_time": "12:30",
-                "end_time": "14:00",
-                "class_name": "Английский язык (ПЗ)",
-                "room_number": "312",
-                "prof_name": "Нюнина Дарья Михайловна"
-            }
-        },
-        "Среда": {
             "1": {
                 "start_time": "9:30",
                 "end_time": "10:30",
                 "class_name": "Физ-ра",
                 "room_number": "— ",
-                "prof_name": "Бурнашова Наталья Юрьевна"
+                "prof_name": "Каминский Юрий Михайлович",
+                "url": ""
             },
+            "3": {
+                "start_time": "12:30",
+                "end_time": "14:00",
+                "class_name": "Английский язык (ПЗ)",
+                "room_number": "312",
+                "prof_name": "Нюнина Дарья Михайловна",
+                "url": "https://el.mpgu.su/enrol/index.php?id=8378"
+            },
+            "4": {
+                "start_time": "14:10",
+                "end_time": "15:40",
+                "class_name": "История зарубежной музыки (ЛК/ПЗ)",
+                "room_number": "316",
+                "prof_name": "Переверзева М. В.",
+                "url": ""
+            }
+        },
+        "Среда": {
             "3": {
                 "start_time": "12:30",
                 "end_time": "14:00",
                 "class_name": "Хор (девушки)",
                 "room_number": "207",
-                "prof_name": "Кальченко Елена Викторовна"
+                "prof_name": "Кальченко Елена Викторовна",
+                "url": "https://x00.pk.mpgu.su/b/3xy-61g-1gq"
             }
         },
         "Четверг": {
@@ -127,28 +150,32 @@
                 "end_time": "12:10",
                 "class_name": "Сольфеджио (2 группа)",
                 "room_number": "308",
-                "prof_name": "Румянцева Маргарита Евгеньевна"
+                "prof_name": "Румянцева Маргарита Евгеньевна",
+                "url": "https://x03.pk.mpgu.su/b/9dc-4h8-pbl"
             },
             "3": {
                 "start_time": "12:30",
                 "end_time": "14:00",
                 "class_name": "Сольфеджио (1 группа)",
                 "room_number": "308",
-                "prof_name": "Румянцева Маргарита Евгеньевна"
+                "prof_name": "Румянцева Маргарита Евгеньевна",
+                "url": "https://x03.pk.mpgu.su/b/9dc-4h8-pbl"
             },
             "4": {
                 "start_time": "14:10",
                 "end_time": "15:40",
                 "class_name": "Психология (ЛК)",
                 "room_number": "316",
-                "prof_name": "Крайнова Юлия Николаевна"
+                "prof_name": "Крайнова Юлия Николаевна",
+                "url": "https://el.mpgu.su/enrol/index.php?id=5407"
             },
             "5": {
                 "start_time": "15:50",
                 "end_time": "17:20",
                 "class_name": "Педагогика (ЛК)",
                 "room_number": "316",
-                "prof_name": "Милехина Татьяна Евгеньевна"
+                "prof_name": "Милехина Татьяна Евгеньевна",
+                "url": "https://teams.microsoft.com/l/meetup-join/19%3ameeting_ZTNhY2QyNGYtNGU0Zi00YThmLWEzNzEtNjhjOTJlYzAxZjVi%40thread.v2/0?context=%7b%22Tid%22%3a%22e9054f9c-4427-460a-aed5-40bff9987087%22%2c%22Oid%22%3a%221bf4e4a3-e92f-44bf-8c3f-2e05d45f79a6%22%7d"
             }
         },
         "Пятница": {
@@ -157,14 +184,34 @@
                 "end_time": "14:00",
                 "class_name": "Правовые основы проф. деят. (ЛК)",
                 "room_number": "206",
-                "prof_name": "Черноусова Наталия Васильевна"
+                "prof_name": "Черноусова Наталия Васильевна",
+                "url": "https://teams.microsoft.com/l/meetup-join/19%3AvB4zJ330ejhIxGjXnx3pR0DsC80_MouZNXs1zs-nxeA1%40thread.tacv2/1665770073952?context=%7B%22Tid%22%3A%22e9054f9c-4427-460a-aed5-40bff9987087%22%2C%22Oid%22%3A%22a1d8b0c5-9b19-4f18-a966-242575aaf722%22%7D"
             },
             "4": {
                 "start_time": "14:10",
                 "end_time": "15:40",
                 "class_name": "Хор (девушки)",
                 "room_number": "316",
-                "prof_name": "Кальченко Елена Викторовна"
+                "prof_name": "Кальченко Елена Викторовна",
+                "url": "https://x00.pk.mpgu.su/b/3xy-61g-1gq"
+            }
+        },
+        "Суббота": {
+            "2": {
+                "start_time": "10:40",
+                "end_time": "12:10",
+                "class_name": "Психология воспитательных практик (ПЗ)",
+                "room_number": "207",
+                "prof_name": "Молодцова Наталья Геннадьевна",
+                "url": "https://teams.microsoft.com/l/meetup-join/19%3ameeting_Y2NmZDJmZWItZTExMS00ZDYwLTllODYtZjI4MDRiOGQ1YzQy%40thread.v2/0?context=%7b%22Tid%22%3a%22e9054f9c-4427-460a-aed5-40bff9987087%22%2c%22Oid%22%3a%2225311360-2224-4ddb-8bfd-d80770b87238%22%7d"
+            },
+            "3": {
+                "start_time": "12:30",
+                "end_time": "14:00",
+                "class_name": "Психология воспитательных практик (ЛК)",
+                "room_number": "207",
+                "prof_name": "Молодцова Наталья Геннадьевна",
+                "url": "https://teams.microsoft.com/l/meetup-join/19%3ameeting_Y2NmZDJmZWItZTExMS00ZDYwLTllODYtZjI4MDRiOGQ1YzQy%40thread.v2/0?context=%7b%22Tid%22%3a%22e9054f9c-4427-460a-aed5-40bff9987087%22%2c%22Oid%22%3a%2225311360-2224-4ddb-8bfd-d80770b87238%22%7d"
             }
         }
     }

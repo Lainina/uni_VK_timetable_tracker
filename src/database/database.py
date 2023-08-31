@@ -45,7 +45,8 @@ class Timetable:
                   end_time: str,
                   class_name: str,
                   room_number: str,
-                  prof_name: str) -> None:
+                  prof_name: str,
+                  url: str) -> None:
 
         day = day.capitalize()
         number = str(number)
@@ -61,7 +62,8 @@ class Timetable:
 
         self.timetable[week_type][day][number] = {'start_time': start_time, 'end_time': end_time,
                                                   'class_name': class_name,
-                                                  'room_number': room_number, 'prof_name': prof_name}
+                                                  'room_number': room_number, 'prof_name': prof_name,
+                                                  'url': url}
         self.save_schedule()
 
     def remove_class(self,

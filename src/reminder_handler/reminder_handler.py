@@ -2,7 +2,7 @@ import time
 from typing import Type
 import re
 
-import py_day
+from src.reminder_handler import py_day
 
 import schedule
 from schedule import CancelJob
@@ -38,8 +38,9 @@ class ReminderHandler:
 
     def schedule_reminder(self, lesson: dict[str, str]) -> None:
         reminder = (
-            f"Через {abs(REMINDER_DELAY)} минут начнётся пара — {lesson['class_name']} (ауд. {lesson['room_number']})"
-            f"\nПреподаватель — {lesson['prof_name']}")
+            f"Через {abs(REMINDER_DELAY)} минут начнётся пара — {lesson['class_name']}"
+            f"\nПреподаватель — {lesson['prof_name']}"
+            f"\nСсылка: {lesson['url']}")
 
         logger.info('Scheduling reminder: %s', lesson['class_name'])
 
