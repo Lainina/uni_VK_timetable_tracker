@@ -1,8 +1,9 @@
-from src.vk.API_handler import VkApiHandler
-from src.reminder_handler.reminder_handler import ReminderHandler
-from src.core.message_handler import MessageHandler
-from src.core.logger.logger import logger
 from threading import Thread
+
+from src.core.logger.logger import logger
+from src.core.message_handler import MessageHandler
+from src.reminder_handler.reminder_handler import ReminderHandler
+from src.vk.API_handler import VkApiHandler
 
 
 class RedemptionBot:

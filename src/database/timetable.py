@@ -1,8 +1,9 @@
 from dataclasses import dataclass
+
 from dacite import from_dict
 
-from src.database.weekday_translation import weekday_translation
 from src.database.database import DatabaseHandler
+from src.database.weekday_translation import weekday_translation
 from src.reminder_handler import py_day
 
 

@@ -1,6 +1,8 @@
-import requests
-from config import TEST_CHAT_ID_1
 from dataclasses import dataclass
+
+import requests
+
+from config import TEST_CHAT_ID_1
 from src.core.logger.logger import logger
 
 

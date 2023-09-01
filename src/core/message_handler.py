@@ -1,6 +1,6 @@
-from src.vk.API_handler import VkApiHandler
 from src.database.timetable import Timetable
 from src.reminder_handler import py_day
+from src.vk.API_handler import VkApiHandler
 
 
 class MessageHandler:

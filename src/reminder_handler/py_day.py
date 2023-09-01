@@ -1,5 +1,6 @@
-from config import TIMEZONE
 from datetime import datetime, timedelta
+
+from config import TIMEZONE
 
 
 def today() -> datetime:

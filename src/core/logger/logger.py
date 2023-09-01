@@ -1,4 +1,5 @@
 import logging
+
 from config import LOGGER_PATH
 
 DEBUG = False

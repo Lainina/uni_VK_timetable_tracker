@@ -1,17 +1,16 @@
+import re
 import time
 from typing import Type
-import re
-
-from src.reminder_handler import py_day
 
 import schedule
 from schedule import CancelJob
 
 from config import REMINDER_DELAY, DAILY_REMINDER_TIME, DAILY_SCHEDULING_TIME, TIMEZONE
-from src.vk.API_handler import VkApiHandler
+from src.core.logger.logger import logger
 from src.core.message_handler import MessageHandler
 from src.database.timetable import Timetable, Lesson
-from src.core.logger.logger import logger
+from src.reminder_handler import py_day
+from src.vk.API_handler import VkApiHandler
 
 
 class ReminderHandler:
