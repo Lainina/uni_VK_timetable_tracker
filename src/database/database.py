@@ -1,19 +1,17 @@
 import json
-from src.database.weekday_translation import weekday_translation
-from src.reminder_handler import py_day
 
 
-class Timetable:
+class DatabaseHandler:
     def __init__(self, file_path: str) -> None:
         self.file_path: str = file_path
         self.timetable = None
-        self.load_schedule()
+        self.__load_schedule()
 
-    def load_schedule(self) -> None:
+    def __load_schedule(self) -> None:
         with open(self.file_path, 'r', encoding='utf-8') as f:
             self.timetable = json.load(f)
 
-    def save_schedule(self) -> None:
+    def __save_schedule(self) -> None:
         with open(self.file_path, 'w', encoding='utf-8') as f:
             json.dump(self.timetable, f, indent=4, ensure_ascii=False)
 
@@ -22,20 +20,6 @@ class Timetable:
                     week_type: str) -> dict[str, dict[str, str]]:
 
         return self.timetable.get(week_type, {}).get(weekday, {})
-
-    @staticmethod
-    def translate_weekday(weekday: str) -> str:
-        return weekday_translation[weekday]
-
-    def get_classes_for_day(self, day=py_day.today()) -> dict[str, dict[str, str]]:
-
-        weekday = self.translate_weekday(day.strftime('%A'))
-
-        week_number = day.isocalendar()[1]
-
-        week_type = 'odd' if week_number % 2 == 1 else 'even'
-
-        return self.get_classes(weekday, week_type)
 
     def add_class(self,
                   week_type: str,
@@ -55,16 +39,14 @@ class Timetable:
             self.timetable[week_type] = {}
 
         if day not in self.timetable[week_type]:
-            self.timetable[week_type][day] = {}
+            self.timetable[week_type][day] = {'day_name': day, 'lessons': []}
 
-        if number not in self.timetable[week_type][day]:
-            self.timetable[week_type][day][number] = {}
-
-        self.timetable[week_type][day][number] = {'start_time': start_time, 'end_time': end_time,
-                                                  'class_name': class_name,
-                                                  'room_number': room_number, 'prof_name': prof_name,
-                                                  'url': url}
-        self.save_schedule()
+        self.timetable[week_type][day]['lessons'].append({'class_number': number,
+                                                          'start_time': start_time, 'end_time': end_time,
+                                                          'class_name': class_name,
+                                                          'room_number': room_number, 'prof_name': prof_name,
+                                                          'url': url})
+        self.__save_schedule()
 
     def remove_class(self,
                      week_type: str,
@@ -78,4 +60,4 @@ class Timetable:
 
             if number in self.timetable[week_type][day]:
                 del self.timetable[week_type][day][number]
-                self.save_schedule()
+                self.__save_schedule()

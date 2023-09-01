@@ -7,9 +7,8 @@ from threading import Thread
 
 
 class RedemptionBot:
-    def __init__(self, timetable: Timetable, vk: VkApiHandler,
+    def __init__(self, vk: VkApiHandler,
                  message_handler: MessageHandler, reminder_handler: ReminderHandler):
-        self.timetable = timetable
         self.vk = vk
         self.message_handler = message_handler
         self.reminder_handler = reminder_handler

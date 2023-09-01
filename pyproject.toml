@@ -12,6 +12,7 @@ schedule = "^1.2.0"
 requests = "^2.31.0"
 flask = "^2.3.3"
 pytz = "^2023.3"
+dacite = "^1.8.1"
 
 
 [tool.poetry.group.dev.dependencies]

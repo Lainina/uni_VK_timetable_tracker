@@ -10,7 +10,7 @@ from schedule import CancelJob
 from config import REMINDER_DELAY, DAILY_REMINDER_TIME, DAILY_SCHEDULING_TIME, TIMEZONE
 from src.vk.API_handler import VkApiHandler
 from src.core.message_handler import MessageHandler
-from src.database.database import Timetable
+from src.database.timetable import Timetable, Lesson
 from src.core.logger.logger import logger
 
 
@@ -36,26 +36,23 @@ class ReminderHandler:
 
         return schedule.CancelJob
 
-    def schedule_reminder(self, lesson: dict[str, str]) -> None:
-        reminder = (
-            f"Через {abs(REMINDER_DELAY)} минут начнётся пара — {lesson['class_name']}"
-            f"\nПреподаватель — {lesson['prof_name']}"
-            f"\nСсылка: {lesson['url']}")
+    def schedule_reminder(self, lesson: Lesson) -> None:
+        reminder = lesson.format(REMINDER_DELAY)
 
-        logger.info('Scheduling reminder: %s', lesson['class_name'])
-
-        start_time = lesson['start_time']
-        end_time = lesson['end_time']
+        start_time = lesson.start_time
+        end_time = lesson.end_time
 
         send_time = py_day.delta_minutes(start_time, REMINDER_DELAY)
+
+        logger.info('Scheduling reminder at %s: %s', send_time, lesson.class_name)
 
         schedule.every().day.at(send_time, TIMEZONE).do(self.send_reminder, text=reminder, delete_time=end_time)
 
     def schedule_day(self, day=py_day.today()) -> None:
-        lessons = self._timetable.get_classes_for_day(day)
+        day_schedule = self._timetable.get_classes_for_day(day)
 
-        for lesson in lessons:
-            self.schedule_reminder(lessons[lesson])
+        for lesson in day_schedule.lessons:
+            self.schedule_reminder(lesson)
 
     def reset_reminders(self) -> Type[CancelJob]:
         schedule.clear()
@@ -71,7 +68,7 @@ class ReminderHandler:
 
         elif DAILY_SCHEDULING_TIME <= now < DAILY_REMINDER_TIME:
             self.schedule_day(py_day.today())
-            schedule.every().day.at(DAILY_REMINDER_TIME).do(self.reset_reminders())
+            schedule.every().day.at(DAILY_REMINDER_TIME).do(self.reset_reminders)
 
     def schedule_every_day(self) -> None:
         schedule.every().day.at(DAILY_SCHEDULING_TIME).do(self.schedule_day)
