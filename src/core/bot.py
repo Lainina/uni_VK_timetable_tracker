@@ -1,4 +1,3 @@
-from src.database.database import Timetable
 from src.vk.API_handler import VkApiHandler
 from src.reminder_handler.reminder_handler import ReminderHandler
 from src.core.message_handler import MessageHandler
