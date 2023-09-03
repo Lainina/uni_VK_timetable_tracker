@@ -281,6 +281,10 @@
                     "url": "https://teams.microsoft.com/l/meetup-join/19%3ameeting_Y2NmZDJmZWItZTExMS00ZDYwLTllODYtZjI4MDRiOGQ1YzQy%40thread.v2/0?context=%7b%22Tid%22%3a%22e9054f9c-4427-460a-aed5-40bff9987087%22%2c%22Oid%22%3a%2225311360-2224-4ddb-8bfd-d80770b87238%22%7d"
                 }
             ]
+        },
+        "Воскресенье": {
+            "day_name": "Воскресенье",
+            "lessons": []
         }
     }
 }
