@@ -1,7 +1,7 @@
 import time
 from threading import Thread
 
-from requests.exceptions import ConnectionError
+from requests.exceptions import ConnectionError, ReadTimeout
 
 from src.core.logger.logger import logger
 from src.core.message_handler import MessageHandler
@@ -29,8 +29,8 @@ class RedemptionBot:
             except RuntimeError:
                 logger.critical('Longpoll connection terminated')
                 raise
-            except ConnectionError:
-                logger.error('Got a Connection Error, retrying...')
+            except (ConnectionError, ReadTimeout) as error:
+                logger.error('Got a request error: %s, retrying...', error)
                 time.sleep(5)
                 continue
 
