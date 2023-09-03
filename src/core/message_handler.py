@@ -8,7 +8,9 @@ class MessageHandler:
         self._vk = vk
         self._timetable = timetable
 
-    def send_schedule_for_day(self, day=py_day.today()) -> None:
+    def send_schedule_for_day(self, day=None) -> None:
+        if day is None:
+            day = py_day.today()
         classes = self._timetable.get_classes_for_day(day)
         formatted_classes = classes.format()
 

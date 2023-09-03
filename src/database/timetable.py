@@ -61,7 +61,9 @@ class Timetable:
     def translate_weekday(weekday: str) -> str:
         return weekday_translation[weekday]
 
-    def get_classes_for_day(self, day=py_day.today()) -> Day:
+    def get_classes_for_day(self, day=None) -> Day:
+        if day is None:
+            day = py_day.today()
         weekday = self.translate_weekday(day.strftime('%A'))
         week_number = day.isocalendar()[1]
         week_type = 'odd' if week_number % 2 == 1 else 'even'

@@ -47,7 +47,10 @@ class ReminderHandler:
 
         schedule.every().day.at(send_time, TIMEZONE).do(self.send_reminder, text=reminder, delete_time=end_time)
 
-    def schedule_day(self, day=py_day.today()) -> None:
+    def schedule_day(self, day=None) -> None:
+        if day is None:
+            day = py_day.today()
+
         day_schedule = self._timetable.get_classes_for_day(day)
 
         for lesson in day_schedule.lessons:

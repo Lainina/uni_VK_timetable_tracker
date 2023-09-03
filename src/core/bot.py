@@ -30,6 +30,7 @@ class RedemptionBot:
                 logger.critical('Longpoll connection terminated')
                 raise
             except ConnectionError:
+                logger.error('Got a Connection Error, retrying...')
                 time.sleep(5)
                 continue
 
