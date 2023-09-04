@@ -1,4 +1,5 @@
 import json
+from src.database.weekday_translation import weekday_translation, week_types
 
 
 class DatabaseHandler:
@@ -6,6 +7,7 @@ class DatabaseHandler:
         self.file_path: str = file_path
         self.timetable = None
         self.__load_schedule()
+        self.check_database()
 
     def __load_schedule(self) -> None:
         with open(self.file_path, 'r', encoding='utf-8') as f:
@@ -14,6 +16,16 @@ class DatabaseHandler:
     def __save_schedule(self) -> None:
         with open(self.file_path, 'w', encoding='utf-8') as f:
             json.dump(self.timetable, f, indent=4, ensure_ascii=False)
+
+    def check_database(self):
+        for week_type in week_types:
+            if week_type not in self.timetable:
+                self.timetable[week_type] = {}
+            for weekday in weekday_translation.values():
+                if weekday not in self.timetable[week_type]:
+                    self.timetable[week_type][weekday] = {'day_name': weekday, 'lessons': []}
+
+        self.__save_schedule()
 
     def get_classes(self,
                     weekday: str,
@@ -34,12 +46,6 @@ class DatabaseHandler:
 
         day = day.capitalize()
         number = str(number)
-
-        if week_type not in self.timetable:
-            self.timetable[week_type] = {}
-
-        if day not in self.timetable[week_type]:
-            self.timetable[week_type][day] = {'day_name': day, 'lessons': []}
 
         self.timetable[week_type][day]['lessons'].append({'class_number': number,
                                                           'start_time': start_time, 'end_time': end_time,

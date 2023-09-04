@@ -8,10 +8,11 @@ TIMEZONE = pytz.timezone('Europe/Moscow')
 
 VK_TOKEN = 'your_token'
 
+API_VERSION = '5.131'
+
 UNI_CHAT_ID = 2000000001
 
 TEST_CHAT_ID_1 = 2000000002
-TEST_CHAT_ID_2 = 2000000003
 
 CHAT_ID = UNI_CHAT_ID
 

@@ -21,9 +21,9 @@ class Message:
 
 
 class VkApiHandler:
-    def __init__(self, token: str, chat_id: int = TEST_CHAT_ID_1):
+    def __init__(self, token: str, api_version, chat_id: int = TEST_CHAT_ID_1):
         self.token = token
-        self.version = '5.131'
+        self.version = api_version
         self.api_url = 'https://api.vk.com/method/'
         self.group_id = '219138476'
         self.chat_id = chat_id
