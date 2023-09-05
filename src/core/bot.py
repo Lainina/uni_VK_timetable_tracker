@@ -35,9 +35,7 @@ class RedemptionBot:
                 continue
 
             if messages:
-                for message in messages:
-                    logger.info('Received message: %s', message)
-                    pass  # TODO: handle messages somehow
+                self.message_handler.handle_messages(messages)
 
     def start_bot(self):
         thread_1 = Thread(target=self.start_polling)

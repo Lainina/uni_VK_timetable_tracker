@@ -65,8 +65,7 @@ class Timetable:
         if day is None:
             day = py_day.today()
         weekday = self.translate_weekday(day.strftime('%A'))
-        week_number = day.isocalendar()[1]
-        week_type = 'odd' if week_number % 2 == 1 else 'even'
+        week_type = py_day.week_type(day)
 
         classes = self._database.get_classes(weekday, week_type)
 

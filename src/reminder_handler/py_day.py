@@ -18,3 +18,10 @@ def delta_minutes(time: str, delta: int) -> str:
                 + timedelta(minutes=delta)).strftime('%H:%M')
 
     return new_time
+
+
+def week_type(day: datetime) -> str:
+    week_number = day.isocalendar()[1]
+    wk_type = 'odd' if week_number % 2 == 1 else 'even'
+
+    return wk_type

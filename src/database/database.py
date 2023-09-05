@@ -1,4 +1,5 @@
 import json
+
 from src.database.weekday_translation import weekday_translation, week_types
 
 
@@ -36,7 +37,7 @@ class DatabaseHandler:
     def add_class(self,
                   week_type: str,
                   day: str,
-                  number: int,
+                  number: int | str,
                   start_time: str,
                   end_time: str,
                   class_name: str,
@@ -57,13 +58,14 @@ class DatabaseHandler:
     def remove_class(self,
                      week_type: str,
                      day: str,
-                     number: int) -> None:
+                     number: int | str) -> None:
 
         day = day.capitalize()
         number = str(number)
 
         if week_type in self.timetable and day in self.timetable[week_type]:
-
-            if number in self.timetable[week_type][day]:
-                del self.timetable[week_type][day][number]
-                self.__save_schedule()
+            lessons = self.timetable[week_type][day]['lessons']
+            for i, lesson in enumerate(lessons):
+                if lesson['class_number'] == number:
+                    del self.timetable[week_type][day]['lessons'][i]
+                    self.__save_schedule()

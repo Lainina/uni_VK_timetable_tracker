@@ -28,8 +28,8 @@ class VkApiHandler:
         self.group_id = '219138476'
         self.chat_id = chat_id
 
-    def send_message(self, text: str, peer_id: int = 0) -> int:
-        if not peer_id:
+    def send_message(self, text: str, peer_id: int = None) -> int:
+        if peer_id is None:
             peer_id = self.chat_id
 
         params = {'peer_ids': str(peer_id),
