@@ -1,6 +1,6 @@
 import json
 
-from src.database.weekday_translation import weekday_translation, week_types
+from src.database.week_consts import weekday_translation, week_types
 
 
 class DatabaseHandler:
@@ -9,6 +9,7 @@ class DatabaseHandler:
         self.timetable = None
         self.__load_schedule()
         self.check_database()
+        self.sort_database()
 
     def __load_schedule(self) -> None:
         with open(self.file_path, 'r', encoding='utf-8') as f:
@@ -26,6 +27,12 @@ class DatabaseHandler:
                 if weekday not in self.timetable[week_type]:
                     self.timetable[week_type][weekday] = {'day_name': weekday, 'lessons': []}
 
+        self.__save_schedule()
+
+    def sort_database(self):
+        for week_type in week_types:
+            for weekday in weekday_translation.values():
+                self.timetable[week_type][weekday]['lessons'].sort(key=lambda lesson: lesson['class_number'])
         self.__save_schedule()
 
     def get_classes(self,
