@@ -9,7 +9,7 @@ from config import REMINDER_DELAY, DAILY_REMINDER_TIME, DAILY_SCHEDULING_TIME, T
 from src.core.logger.logger import logger
 from src.core.message_handler import MessageHandler
 from src.database.timetable import Timetable, Lesson
-from src.reminder_handler import py_day
+from src import py_day
 from src.vk.API_handler import VkApiHandler
 
 
@@ -51,7 +51,7 @@ class ReminderHandler:
         if day is None:
             day = py_day.today()
 
-        day_schedule = self._timetable.get_classes_for_day(day)
+        day_schedule = self._timetable.get_lessons_for_day(day)
 
         for lesson in day_schedule.lessons:
             self.schedule_reminder(lesson)

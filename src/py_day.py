@@ -2,6 +2,18 @@ from datetime import datetime, timedelta
 
 from config import TIMEZONE
 
+weekday_translation = {
+    'Monday': 'Понедельник',
+    'Tuesday': 'Вторник',
+    'Wednesday': 'Среда',
+    'Thursday': 'Четверг',
+    'Friday': 'Пятница',
+    'Saturday': 'Суббота',
+    'Sunday': 'Воскресенье'
+}
+
+week_types = ('odd', 'even')
+
 
 def today() -> datetime:
     day = datetime.now(TIMEZONE)
@@ -25,3 +37,10 @@ def week_type(day: datetime) -> str:
     wk_type = 'odd' if week_number % 2 == 1 else 'even'
 
     return wk_type
+
+
+def weekday(day: datetime) -> str:
+    eng_weekday = day.strftime('%A')
+    ru_weekday = weekday_translation[eng_weekday]
+
+    return ru_weekday
