@@ -82,24 +82,6 @@ class Timetable:
 
         return from_dict(Day, lessons)
 
-    def add_lesson(self,
-                   week_type: str,
-                   day: str,
-                   number: int | str,
-                   start_time: str,
-                   end_time: str,
-                   class_name: str,
-                   room_number: str,
-                   prof_name: str,
-                   url: str) -> None:
-
-        lesson = self.get_lessons_for_day().get_lesson(number)
-
-        if lesson:
-            raise ValueError(f'Lesson {lesson.class_number} — {lesson.class_name} already exists')
-
-        self._database.add_class(week_type, day, number, start_time, end_time, class_name, room_number, prof_name, url)
-
     def remove_lesson(self,
                       week_type: str,
                       day: str,
@@ -112,12 +94,14 @@ class Timetable:
         return lesson
 
     @staticmethod
-    def format_arguments(input_args) -> tuple:   # TODO: refactor this logic into smaller parts
+    def format_arguments(input_args: list, all_args: bool = True) -> list:
         for i, arg in enumerate(input_args):
             if arg == '.':
                 input_args[i] = ''
 
         day, week_type, weekday = input_args[:3]
+        week_type = week_type.lower()
+        weekday = weekday.capitalize()
         del input_args[:3]
 
         args = dict.fromkeys(['class_number', 'start_time', 'end_time',
@@ -139,16 +123,17 @@ class Timetable:
                 weekday = py_day.weekday(day)
         else:
             if week_type not in py_day.week_types:
-                raise ValueError
+                raise ValueError('Неверно указан тип недели')
             if weekday not in py_day.weekday_translation.values():
-                raise ValueError
+                raise ValueError('Неверно указан день недели')
 
         try:
             if int(lesson.class_number) < 1 or int(lesson.class_number) > 7:
-                raise ValueError
+                raise ValueError('Неверно указан номер пары')
 
-            time.strptime(lesson.start_time, '%H:%M')
-            time.strptime(lesson.end_time, '%H:%M')
+            if all_args:
+                time.strptime(lesson.start_time, '%H:%M')
+                time.strptime(lesson.end_time, '%H:%M')
 
             if lesson.room_number:
                 int(lesson.room_number)
@@ -156,12 +141,16 @@ class Timetable:
         except ValueError:
             raise
 
-        if not lesson.class_name or not lesson.prof_name:
-            raise ValueError
+        if all_args:
+            if not lesson.class_name or not lesson.prof_name:
+                raise ValueError('Не указаны название и/или имя преподавателя')
 
-        return (week_type, weekday) + astuple(lesson)
+        new_args = [week_type, weekday]
+        new_args.extend(list(astuple(lesson)))
 
-    def edit_lesson(self, args: list) -> str:
+        return new_args
+
+    def add_lesson(self, args: list) -> str:
         try:
             args = self.format_arguments(args)
         except ValueError:
@@ -169,10 +158,43 @@ class Timetable:
         week_type, weekday, number, start_time, end_time, class_name, room_number, prof_name, url = args
 
         lesson = self.remove_lesson(week_type, weekday, number)
+        answer = ''
         if lesson:
-            self.add_lesson(week_type, weekday, number, start_time, end_time, class_name, room_number, prof_name, url)
-            return f'Удалена пара {lesson.class_number} — {lesson.class_name}, добавлена пара {class_name}'
-            pass  # TODO: make a difference between edit and add
+            answer = f'Удалена пара {lesson.class_number} — {lesson.class_name}, добавлена пара {class_name}'
 
-        self.add_lesson(week_type, weekday, number, start_time, end_time, class_name, room_number, prof_name, url)
-        return f'Добавлена пара {class_name}'
+        self._database.add_class(week_type, weekday, number,
+                                 start_time, end_time,
+                                 class_name, room_number,
+                                 prof_name, url)
+
+        if not answer:
+            answer = f'Добавлена пара {class_name}'
+
+        return answer
+
+    def edit_lesson(self, args: list) -> str:
+        try:
+            args = self.format_arguments(args, False)
+        except ValueError:
+            raise
+
+        week_type, weekday, class_number = args[:3]
+        del args[:2]
+
+        lesson = self.remove_lesson(week_type, weekday, class_number)
+
+        if not lesson:
+            raise ValueError(f'Нет пары {week_type} — {weekday} — {class_number}')
+
+        old_values = astuple(lesson)
+        for i, new_value in enumerate(args):
+            args[i] = old_values[i] if not new_value else new_value
+
+        class_number, start_time, end_time, class_name, room_number, prof_name, url = args
+
+        self._database.add_class(week_type, weekday, class_number,
+                                 start_time, end_time,
+                                 class_name, room_number,
+                                 prof_name, url)
+
+        return f'Изменена пара {class_name}'
