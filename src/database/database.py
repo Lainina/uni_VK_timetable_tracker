@@ -1,22 +1,39 @@
 import json
-from datetime import datetime
-from src.database.weekday_translation import weekday_translation
-from config import TIMEZONE
+
+from src.database.week_consts import weekday_translation, week_types
 
 
-class Timetable:
+class DatabaseHandler:
     def __init__(self, file_path: str) -> None:
         self.file_path: str = file_path
         self.timetable = None
-        self.load_schedule()
+        self.__load_schedule()
+        self.check_database()
+        self.sort_database()
 
-    def load_schedule(self) -> None:
+    def __load_schedule(self) -> None:
         with open(self.file_path, 'r', encoding='utf-8') as f:
             self.timetable = json.load(f)
 
-    def save_schedule(self) -> None:
+    def __save_schedule(self) -> None:
         with open(self.file_path, 'w', encoding='utf-8') as f:
             json.dump(self.timetable, f, indent=4, ensure_ascii=False)
+
+    def check_database(self):
+        for week_type in week_types:
+            if week_type not in self.timetable:
+                self.timetable[week_type] = {}
+            for weekday in weekday_translation.values():
+                if weekday not in self.timetable[week_type]:
+                    self.timetable[week_type][weekday] = {'day_name': weekday, 'lessons': []}
+
+        self.__save_schedule()
+
+    def sort_database(self):
+        for week_type in week_types:
+            for weekday in weekday_translation.values():
+                self.timetable[week_type][weekday]['lessons'].sort(key=lambda lesson: lesson['class_number'])
+        self.__save_schedule()
 
     def get_classes(self,
                     weekday: str,
@@ -24,57 +41,38 @@ class Timetable:
 
         return self.timetable.get(week_type, {}).get(weekday, {})
 
-    @staticmethod
-    def translate_weekday(weekday: str) -> str:
-        return weekday_translation[weekday]
-
-    def get_classes_for_day(self, day=datetime.now(TIMEZONE)) -> dict[str, dict[str, str]]:
-
-        weekday = self.translate_weekday(day.strftime('%A'))
-
-        week_number = day.isocalendar()[1]
-
-        week_type = 'odd' if week_number % 2 == 1 else 'even'
-
-        return self.get_classes(weekday, week_type)
-
     def add_class(self,
                   week_type: str,
                   day: str,
-                  number: int,
+                  number: int | str,
                   start_time: str,
                   end_time: str,
                   class_name: str,
                   room_number: str,
-                  prof_name: str) -> None:
+                  prof_name: str,
+                  url: str) -> None:
 
         day = day.capitalize()
         number = str(number)
 
-        if week_type not in self.timetable:
-            self.timetable[week_type] = {}
-
-        if day not in self.timetable[week_type]:
-            self.timetable[week_type][day] = {}
-
-        if number not in self.timetable[week_type][day]:
-            self.timetable[week_type][day][number] = {}
-
-        self.timetable[week_type][day][number] = {'start_time': start_time, 'end_time': end_time,
-                                                  'class_name': class_name,
-                                                  'room_number': room_number, 'prof_name': prof_name}
-        self.save_schedule()
+        self.timetable[week_type][day]['lessons'].append({'class_number': number,
+                                                          'start_time': start_time, 'end_time': end_time,
+                                                          'class_name': class_name,
+                                                          'room_number': room_number, 'prof_name': prof_name,
+                                                          'url': url})
+        self.__save_schedule()
 
     def remove_class(self,
                      week_type: str,
                      day: str,
-                     number: int) -> None:
+                     number: int | str) -> None:
 
         day = day.capitalize()
         number = str(number)
 
         if week_type in self.timetable and day in self.timetable[week_type]:
-
-            if number in self.timetable[week_type][day]:
-                del self.timetable[week_type][day][number]
-                self.save_schedule()
+            lessons = self.timetable[week_type][day]['lessons']
+            for i, lesson in enumerate(lessons):
+                if lesson['class_number'] == number:
+                    del self.timetable[week_type][day]['lessons'][i]
+                    self.__save_schedule()

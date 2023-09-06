@@ -1,15 +1,17 @@
-from src.database.database import Timetable
-from src.vk.API_handler import VkApiHandler
-from src.reminder_handler.reminder_handler import ReminderHandler
-from src.core.message_handler import MessageHandler
-from src.core.logger.logger import logger
+import time
 from threading import Thread
+
+from requests.exceptions import ConnectionError, ReadTimeout
+
+from src.core.logger.logger import logger
+from src.core.message_handler import MessageHandler
+from src.reminder_handler.reminder_handler import ReminderHandler
+from src.vk.API_handler import VkApiHandler
 
 
 class RedemptionBot:
-    def __init__(self, timetable: Timetable, vk: VkApiHandler,
+    def __init__(self, vk: VkApiHandler,
                  message_handler: MessageHandler, reminder_handler: ReminderHandler):
-        self.timetable = timetable
         self.vk = vk
         self.message_handler = message_handler
         self.reminder_handler = reminder_handler
@@ -27,11 +29,13 @@ class RedemptionBot:
             except RuntimeError:
                 logger.critical('Longpoll connection terminated')
                 raise
+            except (ConnectionError, ReadTimeout) as error:
+                logger.error('Got a request error: %s, retrying...', error)
+                time.sleep(5)
+                continue
 
             if messages:
-                for message in messages:
-                    logger.info('Received message: %s', message)
-                    pass  # TODO: handle messages somehow
+                self.message_handler.handle_messages(messages)
 
     def start_bot(self):
         thread_1 = Thread(target=self.start_polling)

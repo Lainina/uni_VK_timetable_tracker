@@ -1,6 +1,8 @@
-import requests
-from config import TEST_CHAT_ID_1
 from dataclasses import dataclass
+
+import requests
+
+from config import TEST_CHAT_ID_1
 from src.core.logger.logger import logger
 
 
@@ -19,15 +21,15 @@ class Message:
 
 
 class VkApiHandler:
-    def __init__(self, token: str, chat_id: int = TEST_CHAT_ID_1):
+    def __init__(self, token: str, api_version, chat_id: int = TEST_CHAT_ID_1):
         self.token = token
-        self.version = '5.131'
+        self.version = api_version
         self.api_url = 'https://api.vk.com/method/'
         self.group_id = '219138476'
         self.chat_id = chat_id
 
-    def send_message(self, text: str, peer_id: int = 0) -> int:
-        if not peer_id:
+    def send_message(self, text: str, peer_id: int = None) -> int:
+        if peer_id is None:
             peer_id = self.chat_id
 
         params = {'peer_ids': str(peer_id),
@@ -43,6 +45,7 @@ class VkApiHandler:
             return 0
 
         message_id = response.json().get('response', {})[0].get('conversation_message_id', {})
+        logger.info('Sent message: %s, id = %s', text, message_id)
 
         return message_id
 

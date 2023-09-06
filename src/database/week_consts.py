@@ -7,3 +7,5 @@ weekday_translation = {
     'Saturday': 'Суббота',
     'Sunday': 'Воскресенье'
 }
+
+week_types = ('odd', 'even')
