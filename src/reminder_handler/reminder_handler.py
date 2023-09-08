@@ -77,7 +77,7 @@ class ReminderHandler:
 
     def schedule_every_day(self) -> None:
         schedule.every().day.at(DAILY_SCHEDULING_TIME).do(self.schedule_day)
-        schedule.every().day.at(DAILY_REMINDER_TIME).do(self.send_tomorrow_schedule())
+        schedule.every().day.at(DAILY_REMINDER_TIME).do(self.send_tomorrow_schedule)
 
     def update(self) -> None:
         self.reset_reminders()
