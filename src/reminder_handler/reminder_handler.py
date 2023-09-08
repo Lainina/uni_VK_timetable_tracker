@@ -76,6 +76,9 @@ class ReminderHandler:
         schedule.every().day.at(DAILY_SCHEDULING_TIME).do(self.schedule_day)
         schedule.every().day.at(DAILY_REMINDER_TIME).do(self._message_handler.send_schedule_for_day, py_day.tomorrow())
 
+    def update(self) -> None:
+        self.reset_reminders()
+
     def start_reminding(self) -> None:
 
         self.deal_with_today()

@@ -49,7 +49,7 @@ class VkApiHandler:
 
         return message_id
 
-    def delete_message(self, message_id: int, peer_id: int = 0) -> None:
+    def delete_message(self, message_id: int, peer_id: int = None) -> None:
         if not peer_id:
             peer_id = self.chat_id
 
