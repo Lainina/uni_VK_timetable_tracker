@@ -56,6 +56,9 @@ class ReminderHandler:
         for lesson in day_schedule.lessons:
             self.schedule_reminder(lesson)
 
+    def send_tomorrow_schedule(self):
+        self._message_handler.send_schedule_for_day(py_day.tomorrow())
+
     def reset_reminders(self) -> Type[CancelJob]:
         schedule.clear()
         self.schedule_every_day()
@@ -74,7 +77,7 @@ class ReminderHandler:
 
     def schedule_every_day(self) -> None:
         schedule.every().day.at(DAILY_SCHEDULING_TIME).do(self.schedule_day)
-        schedule.every().day.at(DAILY_REMINDER_TIME).do(self._message_handler.send_schedule_for_day, py_day.tomorrow())
+        schedule.every().day.at(DAILY_REMINDER_TIME).do(self.send_tomorrow_schedule())
 
     def update(self) -> None:
         self.reset_reminders()
