@@ -11,7 +11,8 @@ from src.vk.API_handler import VkApiHandler
 
 class RedemptionBot:
     def __init__(self, vk: VkApiHandler,
-                 message_handler: MessageHandler, reminder_handler: ReminderHandler):
+                 message_handler: MessageHandler,
+                 reminder_handler: ReminderHandler):
         self.vk = vk
         self.message_handler = message_handler
         self.reminder_handler = reminder_handler
@@ -26,7 +27,7 @@ class RedemptionBot:
 
         while True:
             try:
-                server, messages = self.vk.poll(server)
+                server, messages, message_events = self.vk.poll(server)
             except RuntimeError:
                 logger.critical('Longpoll connection terminated')
                 raise
@@ -37,6 +38,9 @@ class RedemptionBot:
 
             if messages:
                 self.message_handler.handle_messages(messages)
+
+            if message_events:
+                self.message_handler.handle_events(message_events)
 
     def start_bot(self):
         thread_1 = Thread(target=self.start_polling)

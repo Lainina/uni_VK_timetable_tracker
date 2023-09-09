@@ -82,87 +82,31 @@ class Timetable:
 
         return from_dict(Day, lessons)
 
-    def remove_lesson(self,
-                      week_type: str,
-                      day: str,
-                      number: int | str) -> Lesson | None:
+    def remove_lesson(self, week_type, weekday, class_number) -> Lesson | None:
 
-        lesson = self._database.remove_class(week_type, day, number)
+        lesson = self._database.remove_class(week_type, weekday, class_number)
         if lesson:
             lesson = dacite.from_dict(Lesson, lesson)
 
         return lesson
 
-    @staticmethod
-    def format_arguments(input_args: list, all_args: bool = True) -> list:
-        for i, arg in enumerate(input_args):
-            if arg == '.':
-                input_args[i] = ''
+    def add_lesson(self,
+                   week_type: str,
+                   weekday: str,
+                   class_number: int | str,
+                   start_time: str,
+                   end_time: str,
+                   class_name: str,
+                   room_number: str,
+                   prof_name: str,
+                   url: str) -> str:
 
-        day, week_type, weekday = input_args[:3]
-        week_type = week_type.lower()
-        weekday = weekday.capitalize()
-        del input_args[:3]
-
-        args = dict.fromkeys(['class_number', 'start_time', 'end_time',
-                              'class_name', 'room_number',
-                              'prof_name', 'url'])
-
-        for value, arg in zip(input_args, args):
-            args[arg] = value
-
-        lesson = dacite.from_dict(Lesson, args)
-        if day:
-            if day.lower() in ('tomorrow', 'завтра'):
-                day = py_day.tomorrow()
-                week_type = py_day.week_type(day)
-                weekday = py_day.weekday(day)
-            elif day.lower() in ('today', 'сегодня'):
-                day = py_day.today()
-                week_type = py_day.week_type(day)
-                weekday = py_day.weekday(day)
-        else:
-            if week_type not in py_day.week_types:
-                raise ValueError('Неверно указан тип недели')
-            if weekday not in py_day.weekday_translation.values():
-                raise ValueError('Неверно указан день недели')
-
-        try:
-            if int(lesson.class_number) < 1 or int(lesson.class_number) > 7:
-                raise ValueError('Неверно указан номер пары')
-
-            if all_args:
-                time.strptime(lesson.start_time, '%H:%M')
-                time.strptime(lesson.end_time, '%H:%M')
-
-            if lesson.room_number:
-                int(lesson.room_number)
-
-        except ValueError:
-            raise
-
-        if all_args:
-            if not lesson.class_name or not lesson.prof_name:
-                raise ValueError('Не указаны название и/или имя преподавателя')
-
-        new_args = [week_type, weekday]
-        new_args.extend(list(astuple(lesson)))
-
-        return new_args
-
-    def add_lesson(self, args: list) -> str:
-        try:
-            args = self.format_arguments(args)
-        except ValueError:
-            raise
-        week_type, weekday, number, start_time, end_time, class_name, room_number, prof_name, url = args
-
-        lesson = self.remove_lesson(week_type, weekday, number)
+        lesson = self.remove_lesson(week_type, weekday, class_number)
         answer = ''
         if lesson:
             answer = f'Удалена пара {lesson.class_number} — {lesson.class_name}, добавлена пара {class_name}'
 
-        self._database.add_class(week_type, weekday, number,
+        self._database.add_class(week_type, weekday, class_number,
                                  start_time, end_time,
                                  class_name, room_number,
                                  prof_name, url)
@@ -172,14 +116,16 @@ class Timetable:
 
         return answer
 
-    def edit_lesson(self, args: list) -> str:
-        try:
-            args = self.format_arguments(args, False)
-        except ValueError:
-            raise
-
-        week_type, weekday, class_number = args[:3]
-        del args[:2]
+    def edit_lesson(self,
+                    week_type: str,
+                    weekday: str,
+                    class_number: int | str,
+                    start_time: str,
+                    end_time: str,
+                    class_name: str,
+                    room_number: str,
+                    prof_name: str,
+                    url: str) -> str:
 
         lesson = self.remove_lesson(week_type, weekday, class_number)
 
