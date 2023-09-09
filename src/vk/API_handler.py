@@ -14,10 +14,21 @@ class Server:
 
 
 @dataclass
-class Message:
+class EvenObject:
     peer_id: int
     message_id: int
+
+
+@dataclass
+class Message(EvenObject):
     text: str
+
+
+@dataclass
+class MessageEvent(EvenObject):
+    user_id: int
+    event_id: str
+    payload: str
 
 
 class VkApiHandler:
@@ -28,7 +39,7 @@ class VkApiHandler:
         self.group_id = '219138476'
         self.chat_id = chat_id
 
-    def send_message(self, text: str, peer_id: int = None) -> int:
+    def send_message(self, text: str, peer_id: int = None, keyboard: dict = None) -> int:
         if peer_id is None:
             peer_id = self.chat_id
 
@@ -38,10 +49,14 @@ class VkApiHandler:
                   'access_token': self.token,
                   'v': self.version}
         url = self.api_url + 'messages.send'
-        response = requests.get(url=url, params=params)
+
+        if keyboard:
+            response = requests.post(url=url, params=params, data=keyboard)
+        else:
+            response = requests.post(url=url, params=params)
 
         if response.json().get('error', {}):
-            logger.error('Could not send message: %s', text)
+            logger.error('Could not send message: %s. Error: %s', text, response.json().get('error', {}))
             return 0
 
         message_id = response.json().get('response', {})[0].get('conversation_message_id', {})
@@ -85,7 +100,7 @@ class VkApiHandler:
 
         return Server(key, server_url, ts)
 
-    def poll(self, server: Server) -> (str, list[Message]):
+    def poll(self, server: Server) -> (str, list[Message], list[MessageEvent]):
         params = {'act': 'a_check',
                   'key': server.key,
                   'ts': server.ts,
@@ -114,15 +129,19 @@ class VkApiHandler:
         response = response.json()
 
         server.ts = response['ts']
-        messages = []
+        messages, message_events = [], []
         for update in response['updates']:
-            info = update['object']['message']
+            if update['type'] == 'message_new':
+                info = update['object']['message']
+                message = Message(info['peer_id'], info['conversation_message_id'], info['text'])
+                messages.append(message)
+            elif update['type'] == 'message_event':
+                info = update['object']
+                message_event = MessageEvent(info['peer_id'], info['conversation_message_id'],
+                                             info['user_id'], info['event_id'], info['payload'])
+                message_events.append(message_event)
 
-            message = Message(info['peer_id'], info['conversation_message_id'], info['text'])
-
-            messages.append(message)
-
-        return server, messages
+        return server, messages, message_events
 
     def get_first_server(self) -> Server:
         try:

@@ -1,0 +1,43 @@
+{
+    "starting_keyboard": {
+        "inline": true,
+        "buttons": [
+            [
+                {
+                    "action": {
+                        "type": "callback",
+                        "payload": "{\"action\":\"add\"}",
+                        "label": "Изменить пару"
+                    }
+                }
+
+            ],
+            [
+               {
+                    "action": {
+                        "type": "callback",
+                        "payload": "{\"action\":\"remove\"}",
+                        "label": "Удалить пару"
+                    }
+                },
+                {
+                    "action": {
+                        "type": "callback",
+                        "payload": "{\"action\":\"edit\"}",
+                        "label": "Добавить пару"
+                    }
+                }
+            ],
+            [
+                {
+                    "action": {
+                        "type": "callback",
+                        "payload": "{\"action\":\"cancel\"}",
+                        "label": "Отменить"
+                    },
+                    "color": "negative"
+                }
+            ]
+        ]
+    }
+}
