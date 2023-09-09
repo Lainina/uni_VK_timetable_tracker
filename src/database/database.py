@@ -1,6 +1,6 @@
 import json
 
-from src.database.week_consts import weekday_translation, week_types
+from src.py_day import weekday_translation, week_types
 
 
 class DatabaseHandler:
@@ -60,12 +60,13 @@ class DatabaseHandler:
                                                           'class_name': class_name,
                                                           'room_number': room_number, 'prof_name': prof_name,
                                                           'url': url})
+        self.sort_database()
         self.__save_schedule()
 
     def remove_class(self,
                      week_type: str,
                      day: str,
-                     number: int | str) -> None:
+                     number: int | str) -> dict[str, str] | None:
 
         day = day.capitalize()
         number = str(number)
@@ -76,3 +77,4 @@ class DatabaseHandler:
                 if lesson['class_number'] == number:
                     del self.timetable[week_type][day]['lessons'][i]
                     self.__save_schedule()
+                    return lesson

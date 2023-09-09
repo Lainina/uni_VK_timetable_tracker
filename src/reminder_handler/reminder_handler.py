@@ -9,7 +9,7 @@ from config import REMINDER_DELAY, DAILY_REMINDER_TIME, DAILY_SCHEDULING_TIME, T
 from src.core.logger.logger import logger
 from src.core.message_handler import MessageHandler
 from src.database.timetable import Timetable, Lesson
-from src.reminder_handler import py_day
+from src import py_day
 from src.vk.API_handler import VkApiHandler
 
 
@@ -51,10 +51,13 @@ class ReminderHandler:
         if day is None:
             day = py_day.today()
 
-        day_schedule = self._timetable.get_classes_for_day(day)
+        day_schedule = self._timetable.get_lessons_for_day(day)
 
         for lesson in day_schedule.lessons:
             self.schedule_reminder(lesson)
+
+    def send_tomorrow_schedule(self):
+        self._message_handler.send_schedule_for_day(py_day.tomorrow())
 
     def reset_reminders(self) -> Type[CancelJob]:
         schedule.clear()
@@ -74,7 +77,10 @@ class ReminderHandler:
 
     def schedule_every_day(self) -> None:
         schedule.every().day.at(DAILY_SCHEDULING_TIME).do(self.schedule_day)
-        schedule.every().day.at(DAILY_REMINDER_TIME).do(self._message_handler.send_schedule_for_day, py_day.tomorrow())
+        schedule.every().day.at(DAILY_REMINDER_TIME).do(self.send_tomorrow_schedule)
+
+    def update(self) -> None:
+        self.reset_reminders()
 
     def start_reminding(self) -> None:
 

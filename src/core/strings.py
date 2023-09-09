@@ -1,0 +1,10 @@
+add_edit_class_usage = ('day (opt)\n'
+                        'week_type (opt)\n'
+                        'weekday (opt)\n'
+                        'number\n'
+                        'start_time\n'
+                        'end_time\n'
+                        'class_name\n'
+                        'room_number(opt)\n'
+                        'prof_name\n'
+                        'url (opt)')
