@@ -1,6 +1,4 @@
-import time
 from dataclasses import dataclass, astuple
-from datetime import datetime
 
 import dacite
 from dacite import from_dict
@@ -72,13 +70,11 @@ class Timetable:
     def __init__(self, database: DatabaseHandler) -> None:
         self._database = database
 
-    def get_lessons_for_day(self, day: datetime = None) -> Day:
+    def get_lessons_for_day(self, day: py_day.Day = None) -> Day:
         if day is None:
             day = py_day.today()
-        weekday = py_day.weekday(day)
-        week_type = py_day.week_type(day)
 
-        lessons = self._database.get_classes(weekday, week_type)
+        lessons = self._database.get_classes(day.weekday, day.week_type)
 
         return from_dict(Day, lessons)
 
@@ -125,7 +121,7 @@ class Timetable:
                     class_name: str,
                     room_number: str,
                     prof_name: str,
-                    url: str) -> str:
+                    url: str) -> str:  # TODO
 
         lesson = self.remove_lesson(week_type, weekday, class_number)
 

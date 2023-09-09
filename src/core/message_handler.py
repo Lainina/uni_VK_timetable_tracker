@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from src import py_day
 from src.core.button_handler import ButtonHandler
 from src.core.logger.logger import logger
@@ -16,7 +14,7 @@ class MessageHandler(Observable):
         self._timetable = timetable
         self._button_handler = button_handler
 
-    def send_schedule_for_day(self, day: datetime = None, peer_id: int = None) -> None:
+    def send_schedule_for_day(self, day: py_day.Day = None, peer_id: int = None) -> None:
         if day is None:
             day = py_day.today()
         lessons = self._timetable.get_lessons_for_day(day)

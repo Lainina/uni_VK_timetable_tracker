@@ -6,36 +6,25 @@
                 {
                     "action": {
                         "type": "callback",
-                        "payload": "{\"action\":\"add\"}",
+                        "payload": "{\"command\":\"edit\",\"menu\":[\"init\"]}",
                         "label": "Изменить пару"
                     }
                 }
-
             ],
             [
-               {
+                {
                     "action": {
                         "type": "callback",
-                        "payload": "{\"action\":\"remove\"}",
+                        "payload": "{\"command\":\"remove\",\"menu\":[\"init\"]}",
                         "label": "Удалить пару"
                     }
                 },
                 {
                     "action": {
                         "type": "callback",
-                        "payload": "{\"action\":\"edit\"}",
+                        "payload": "{\"command\":\"add\",\"menu\":[\"init\"]}",
                         "label": "Добавить пару"
                     }
-                }
-            ],
-            [
-                {
-                    "action": {
-                        "type": "callback",
-                        "payload": "{\"action\":\"cancel\"}",
-                        "label": "Отменить"
-                    },
-                    "color": "negative"
                 }
             ]
         ]

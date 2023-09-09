@@ -28,7 +28,11 @@ class Message(EvenObject):
 class MessageEvent(EvenObject):
     user_id: int
     event_id: str
-    payload: str
+    payload: dict
+
+    def __post_init__(self):
+        self.command = self.payload['command']
+        self.menu = self.payload.get('menu', [])
 
 
 class VkApiHandler:
@@ -50,10 +54,7 @@ class VkApiHandler:
                   'v': self.version}
         url = self.api_url + 'messages.send'
 
-        if keyboard:
-            response = requests.post(url=url, params=params, data=keyboard)
-        else:
-            response = requests.post(url=url, params=params)
+        response = requests.post(url=url, params=params, data=keyboard)
 
         if response.json().get('error', {}):
             logger.error('Could not send message: %s. Error: %s', text, response.json().get('error', {}))
@@ -63,6 +64,40 @@ class VkApiHandler:
         logger.info('Sent message: %s, id = %s', text, message_id)
 
         return message_id
+
+    def edit_message(self, text: str, peer_id: int, message_id: int, keyboard: dict = None) -> None:
+        params = {'peer_id': peer_id,
+                  'conversation_message_id': message_id,
+                  'message': text,
+                  'access_token': self.token,
+                  'v': self.version}
+
+        url = self.api_url + 'messages.edit'
+
+        response = requests.post(url=url, params=params, data=keyboard)
+
+        if response.json().get('error', {}):
+            logger.error('Could not edit message: %s. Error: %s', text, response.json().get('error', {}))
+            return
+
+        logger.debug('Edited message: %s', text)
+
+    def send_message_event_answer(self, event: MessageEvent, event_data: dict) -> None:
+        params = {'event_id': event.event_id,
+                  'user_id': event.user_id,
+                  'peer_id': event.peer_id,
+                  'event_data': event_data,
+                  'access_token': self.token,
+                  'v': self.version}
+        url = self.api_url + 'messages.sendMessageEventAnswer'
+
+        response = requests.post(url=url, params=params, data=event_data)
+
+        if response.json().get('error', {}):
+            logger.error('Could not send event answer. Error: %s', response.json().get('error', {}))
+            return
+
+        logger.info('Sent event answer: %s', event_data)
 
     def delete_message(self, message_id: int, peer_id: int = None) -> None:
         if not peer_id:
