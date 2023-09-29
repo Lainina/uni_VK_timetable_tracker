@@ -14,18 +14,22 @@ class Server:
 
 
 @dataclass
-class EvenObject:
+class EventObject:
     peer_id: int
     message_id: int
 
 
 @dataclass
-class Message(EvenObject):
+class Message(EventObject):
     text: str
+    attachments: []
+
+    def __str__(self):
+        return f'(peer_id: {self.peer_id}, message_id: {self.message_id}, text: "{self.text}")'
 
 
 @dataclass
-class MessageEvent(EvenObject):
+class MessageEvent(EventObject):
     user_id: int
     event_id: str
     payload: dict
@@ -168,7 +172,7 @@ class VkApiHandler:
         for update in response['updates']:
             if update['type'] == 'message_new':
                 info = update['object']['message']
-                message = Message(info['peer_id'], info['conversation_message_id'], info['text'])
+                message = Message(info['peer_id'], info['conversation_message_id'], info['text'], info['attachments'])
                 messages.append(message)
             elif update['type'] == 'message_event':
                 info = update['object']

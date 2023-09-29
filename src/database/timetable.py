@@ -1,9 +1,11 @@
 from dataclasses import dataclass, astuple
 
 import dacite
+import requests
 from dacite import from_dict
 
 from src import py_day
+from src.core.logger.logger import logger
 from src.database.database import DatabaseHandler
 
 
@@ -77,6 +79,22 @@ class Timetable:
         lessons = self._database.get_classes(day.weekday, day.week_type)
 
         return from_dict(Day, lessons)
+
+    def change_database(self, file: dict[str: str | dict]) -> None:
+        if file['type'] != 'doc':
+            logger.error('Wrong file type when changing database, got %s', file['type'])
+            return
+
+        file = file['doc']
+
+        if file['ext'] != 'json':
+            logger.error('Wrong file type when changing database, got %s', file['ext'])
+            return
+
+        url = file['url']
+        with requests.get(url, stream=True) as request:
+            request.raise_for_status()
+            self._database.change_database(request.json())
 
     def remove_lesson(self, week_type, weekday, class_number) -> Lesson | None:
 

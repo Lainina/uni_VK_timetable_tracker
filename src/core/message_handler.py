@@ -29,6 +29,8 @@ class MessageHandler(Observable):
             self._vk.send_message('чекаю', message.peer_id)
         elif text.lower() == '/edit':
             self._button_handler.start_keyboard()
+        elif text.lower() == '/change_database' and len(message.attachments) == 1:
+            self._timetable.change_database(message.attachments[0])
 
     def handle_messages(self, messages: list[Message]) -> None:
         for message in messages:
