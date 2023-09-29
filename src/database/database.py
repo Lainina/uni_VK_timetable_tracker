@@ -35,6 +35,11 @@ class DatabaseHandler:
                 self.timetable[week_type][weekday]['lessons'].sort(key=lambda lesson: lesson['class_number'])
         self.__save_schedule()
 
+    def change_database(self, file: dict) -> None:
+        self.timetable = file
+        self.check_database()
+        self.sort_database()
+
     def get_classes(self,
                     weekday: str,
                     week_type: str) -> dict[str, dict[str, str]]:

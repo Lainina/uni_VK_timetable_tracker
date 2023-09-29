@@ -66,7 +66,7 @@ class ReminderHandler:
         return CancelJob
 
     def deal_with_today(self) -> None:
-        now = py_day.today().strftime('%H:%M')
+        now = py_day.today().formatted_time
 
         if now == DAILY_REMINDER_TIME:
             self._message_handler.send_schedule_for_day(py_day.tomorrow())

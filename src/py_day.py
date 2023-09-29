@@ -15,13 +15,23 @@ weekday_translation = {
 week_types = ('odd', 'even')
 
 
-def today() -> datetime:
-    day = datetime.now(TIMEZONE)
+class Day:
+    def __init__(self, day: datetime | tuple[str, str]):
+        if type(day) == tuple:
+            self.week_type, self.weekday = day
+        else:
+            self.week_type = week_type(day)
+            self.weekday = weekday(day)
+            self.formatted_time = day.strftime('%H:%M')
+
+
+def today() -> Day:
+    day = Day(datetime.now(TIMEZONE))
     return day
 
 
-def tomorrow() -> datetime:
-    day = datetime.now(TIMEZONE) + timedelta(days=1)
+def tomorrow() -> Day:
+    day = Day(datetime.now(TIMEZONE) + timedelta(days=1))
     return day
 
 

@@ -18,6 +18,10 @@ class Message:
     peer_id: int
     message_id: int
     text: str
+    attachments: []
+
+    def __str__(self):
+        return f'(peer_id: {self.peer_id}, message_id: {self.message_id}, text: "{self.text}")'
 
 
 class VkApiHandler:
@@ -41,7 +45,7 @@ class VkApiHandler:
         response = requests.get(url=url, params=params)
 
         if response.json().get('error', {}):
-            logger.error('Could not send message: %s', text)
+            logger.error('Could not send message: %s. Error: %s', text, response.json().get('error', {}))
             return 0
 
         message_id = response.json().get('response', {})[0].get('conversation_message_id', {})
@@ -116,11 +120,10 @@ class VkApiHandler:
         server.ts = response['ts']
         messages = []
         for update in response['updates']:
-            info = update['object']['message']
-
-            message = Message(info['peer_id'], info['conversation_message_id'], info['text'])
-
-            messages.append(message)
+            if update['type'] == 'message_new':
+                info = update['object']['message']
+                message = Message(info['peer_id'], info['conversation_message_id'], info['text'], info['attachments'])
+                messages.append(message)
 
         return server, messages
 
