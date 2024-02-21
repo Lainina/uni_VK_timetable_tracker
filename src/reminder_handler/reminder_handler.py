@@ -21,8 +21,8 @@ class ReminderHandler:
 
     def send_reminder(self, text, delete_time) -> Type[CancelJob]:
 
-        match = re.search(r"пара — [\w. -]+", text)
-        logger.info('Sending reminder: %s', match[0][7:] if match else 'Not found')
+        lesson_name = re.search(r"пара — [\w. -]+", text)
+        logger.info('Sending reminder: %s', lesson_name[0][7:] if lesson_name else 'Not found')
 
         reminder_id = self._vk.send_message(text)
         schedule.every().day.at(delete_time, TIMEZONE).do(self.delete_reminder, reminder_id=reminder_id)

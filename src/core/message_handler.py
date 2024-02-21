@@ -25,8 +25,16 @@ class MessageHandler(Observable):
 
         if text.lower() == 'чекай':
             self._vk.send_message('чекаю', message.peer_id)
+            return
         elif text.lower() == '/change_database' and len(message.attachments) == 1:
             self._timetable.change_database(message.attachments[0])
+            return
+        elif 'расписание' in text.lower() and 'завтра' in text.lower():
+            self.send_schedule_for_day(py_day.tomorrow(), message.peer_id)
+            return
+        elif 'расписание' in text.lower() and 'сегодня' in text.lower():
+            self.send_schedule_for_day(py_day.today(), message.peer_id)
+            return
 
     def handle_messages(self, messages: list[Message]) -> None:
         for message in messages:
