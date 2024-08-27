@@ -10,6 +10,7 @@ class DatabaseHandler:
         self.__load_schedule()
         self.check_database()
         self.sort_database()
+        self.check_week_types()
 
     def __load_schedule(self) -> None:
         with open(self.file_path, 'r', encoding='utf-8') as f:
@@ -19,7 +20,7 @@ class DatabaseHandler:
         with open(self.file_path, 'w', encoding='utf-8') as f:
             json.dump(self.timetable, f, indent=4, ensure_ascii=False)
 
-    def check_database(self):
+    def check_database(self) -> None:
         for week_type in week_types:
             if week_type not in self.timetable:
                 self.timetable[week_type] = {}
@@ -29,16 +30,29 @@ class DatabaseHandler:
 
         self.__save_schedule()
 
-    def sort_database(self):
+    def sort_database(self) -> None:
         for week_type in week_types:
             for weekday in weekday_translation.values():
                 self.timetable[week_type][weekday]['lessons'].sort(key=lambda lesson: lesson['class_number'])
+        self.__save_schedule()
+
+    @staticmethod
+    def week_is_empty(week: dict) -> bool:
+        for day in week.values():
+            if day['lessons']:
+                return False
+        return True
+
+    def check_week_types(self) -> None:     # todo: make this hacky thing better
+        if self.week_is_empty(self.timetable['even']):
+            self.timetable['even'] = self.timetable['odd']
         self.__save_schedule()
 
     def change_database(self, file: dict) -> None:
         self.timetable = file
         self.check_database()
         self.sort_database()
+        self.check_week_types()
 
     def get_classes(self,
                     weekday: str,
