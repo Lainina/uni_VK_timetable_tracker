@@ -15,6 +15,7 @@ class RedemptionBot:
         self.vk = vk
         self.message_handler = message_handler
         self.reminder_handler = reminder_handler
+        self.message_handler.register(self.reminder_handler)
 
     def start_reminding(self) -> None:
         self.reminder_handler.start_reminding()
@@ -31,7 +32,7 @@ class RedemptionBot:
                 raise
             except (ConnectionError, ReadTimeout) as error:
                 logger.error('Got a request error: %s, retrying...', error)
-                time.sleep(5)
+                time.sleep(20)
                 continue
 
             if messages:

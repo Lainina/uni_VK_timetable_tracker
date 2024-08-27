@@ -1,10 +1,12 @@
 from dataclasses import dataclass
 
+import dacite
+import requests
 from dacite import from_dict
 
+from src import py_day
+from src.core.logger.logger import logger
 from src.database.database import DatabaseHandler
-from src.database.weekday_translation import weekday_translation
-from src.reminder_handler import py_day
 
 
 @dataclass(frozen=True)
@@ -52,21 +54,78 @@ class Day:
 
         return formatted_classes
 
+    def get_lesson_numbers(self) -> list[str]:
+        numbers = []
+        for lesson in self.lessons:
+            numbers.append(lesson.class_number)
+        return numbers
+
+    def get_lesson(self, number: int | str) -> Lesson | None:
+        numbers = self.get_lesson_numbers()
+        try:
+            return self.lessons[numbers.index(str(number))]
+        except ValueError:
+            return
+
 
 class Timetable:
     def __init__(self, database: DatabaseHandler) -> None:
         self._database = database
 
-    @staticmethod
-    def translate_weekday(weekday: str) -> str:
-        return weekday_translation[weekday]
-
-    def get_classes_for_day(self, day=None) -> Day:
+    def get_lessons_for_day(self, day: py_day.Day = None) -> Day:
         if day is None:
             day = py_day.today()
-        weekday = self.translate_weekday(day.strftime('%A'))
-        week_type = py_day.week_type(day)
 
-        classes = self._database.get_classes(weekday, week_type)
+        lessons = self._database.get_classes(day.weekday, day.week_type)
 
-        return from_dict(Day, classes)
+        return from_dict(Day, lessons)
+
+    def change_database(self, file: dict[str: str | dict]) -> None:
+        if file['type'] != 'doc':
+            logger.error('Wrong file type when changing database, got %s', file['type'])
+            return
+
+        file = file['doc']
+
+        if file['ext'] != 'json':
+            logger.error('Wrong file type when changing database, got %s', file['ext'])
+            return
+
+        url = file['url']
+        with requests.get(url, stream=True) as request:
+            request.raise_for_status()
+            self._database.change_database(request.json())
+
+    def remove_lesson(self, week_type, weekday, class_number) -> Lesson | None:
+
+        lesson = self._database.remove_class(week_type, weekday, class_number)
+        if lesson:
+            lesson = dacite.from_dict(Lesson, lesson)
+
+        return lesson
+
+    def add_lesson(self,
+                   week_type: str,
+                   weekday: str,
+                   class_number: int | str,
+                   start_time: str,
+                   end_time: str,
+                   class_name: str,
+                   room_number: str,
+                   prof_name: str,
+                   url: str) -> str:
+
+        lesson = self.remove_lesson(week_type, weekday, class_number)
+        answer = ''
+        if lesson:
+            answer = f'Удалена пара {lesson.class_number} — {lesson.class_name}, добавлена пара {class_name}'
+
+        self._database.add_class(week_type, weekday, class_number,
+                                 start_time, end_time,
+                                 class_name, room_number,
+                                 prof_name, url)
+
+        if not answer:
+            answer = f'Добавлена пара {class_name}'
+
+        return answer
