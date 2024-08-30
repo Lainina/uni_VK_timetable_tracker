@@ -73,11 +73,11 @@ class ReminderHandler:
 
         elif DAILY_SCHEDULING_TIME <= now < DAILY_REMINDER_TIME:
             self.schedule_day(py_day.today())
-            schedule.every().day.at(DAILY_REMINDER_TIME).do(self.reset_reminders)
+            schedule.every().day.at(DAILY_REMINDER_TIME, TIMEZONE).do(self.reset_reminders)
 
     def schedule_every_day(self) -> None:
-        schedule.every().day.at(DAILY_SCHEDULING_TIME).do(self.schedule_day)
-        schedule.every().day.at(DAILY_REMINDER_TIME).do(self.send_tomorrow_schedule)
+        schedule.every().day.at(DAILY_SCHEDULING_TIME, TIMEZONE).do(self.schedule_day)
+        schedule.every().day.at(DAILY_REMINDER_TIME, TIMEZONE).do(self.send_tomorrow_schedule)
 
     def update(self) -> None:
         self.reset_reminders()
